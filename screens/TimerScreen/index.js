@@ -7,7 +7,6 @@ const TimerScreen = () => {
     return (
         <View style={styles.main}>
             <View style={styles.clock}>
-                {/* <Text>Yo</Text> */}
                 <CountdownCircleTimer
                     isPlaying
                     duration={10}
