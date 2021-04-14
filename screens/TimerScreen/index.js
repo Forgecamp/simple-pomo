@@ -1,6 +1,14 @@
 // Core/First Party
 import React, { useState } from "react";
-import { View, StyleSheet, Animated, Platform, Text } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Animated,
+    Platform,
+    Text,
+    TouchableOpacity,
+    Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // Additional Modules/Components
 // Third Party Packages
@@ -14,6 +22,38 @@ const TimerScreen = () => {
     const [startingDuration, setStartingDuration] = useState(900);
     const [key, setKey] = useState(0);
     const [isRunning, setIsRunning] = useState(true);
+
+    const resetTimerHandler = () => {
+        setIsRunning(() => false);
+        setKey((prevKey) => prevKey + 1);
+    };
+
+    const playPauseHandler = () => {
+        setIsRunning((prevStatus) => !prevStatus);
+    };
+
+    const stopHandler = () => {
+        Alert.alert(
+            "Stop Timer",
+            "Stop the timer and complete the current period?",
+            [
+                {
+                    text: "Yes",
+                    onPress: () => {
+                        console.log("stop");
+                        setIsRunning(() => false);
+                        setKey((prevKey) => prevKey + 1);
+                    },
+                },
+                {
+                    text: "No",
+                    onPress: () => {
+                        console.log("continue");
+                    },
+                },
+            ]
+        );
+    };
 
     return (
         <View style={styles.main}>
@@ -41,36 +81,44 @@ const TimerScreen = () => {
                                     color={ColorConstants.Notice}
                                     style={{ display: "none" }}
                                 />
-                                <Animated.Text
-                                    style={{
-                                        color: animatedColor,
-                                        ...styles.interiorText,
-                                    }}
-                                >
-                                    {minutes} : {seconds}
-                                </Animated.Text>
-                                <Ionicons
-                                    name="md-reload"
-                                    size={24}
-                                    color={ColorConstants.Notice}
-                                    style={{ paddingTop: 15 }}
-                                />
+                                <TouchableOpacity onPress={playPauseHandler}>
+                                    <Animated.Text
+                                        style={{
+                                            color: animatedColor,
+                                            ...styles.interiorText,
+                                        }}
+                                    >
+                                        {minutes} : {seconds}
+                                    </Animated.Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={resetTimerHandler}>
+                                    <Ionicons
+                                        name="md-reload"
+                                        size={24}
+                                        color={ColorConstants.Notice}
+                                        style={{ paddingTop: 15 }}
+                                    />
+                                </TouchableOpacity>
                             </View>
                         );
                     }}
                 </CountdownCircleTimer>
             </View>
             <View style={styles.controlBar}>
-                <Ionicons
-                    name="md-play"
-                    size={48}
-                    color={ColorConstants.Notice}
-                />
-                <Ionicons
-                    name="md-stop"
-                    size={48}
-                    color={ColorConstants.Notice}
-                />
+                <TouchableOpacity onPress={playPauseHandler}>
+                    <Ionicons
+                        name={isRunning ? "md-pause" : "md-play"}
+                        size={48}
+                        color={ColorConstants.Notice}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={stopHandler}>
+                    <Ionicons
+                        name="md-stop"
+                        size={48}
+                        color={ColorConstants.Notice}
+                    />
+                </TouchableOpacity>
             </View>
         </View>
     );
