@@ -21,7 +21,7 @@ const TimerScreen = () => {
     const [startingTime, setStartingTime] = useState(900);
     const [startingDuration, setStartingDuration] = useState(900);
     const [key, setKey] = useState(0);
-    const [isRunning, setIsRunning] = useState(true);
+    const [isRunning, setIsRunning] = useState(false);
 
     const resetTimerHandler = () => {
         setIsRunning(() => false);
