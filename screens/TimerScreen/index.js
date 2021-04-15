@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 // Core/First Party
 import React, { useState } from "react";
 import {
@@ -98,7 +97,11 @@ const TimerScreen = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={resetTimerHandler}>
                                     <Ionicons
-                                        name="md-reload"
+                                        name={
+                                            Platform.OS === "android"
+                                                ? "md-reload"
+                                                : "ios-reload"
+                                        }
                                         size={24}
                                         color={ColorConstants.Notice}
                                     />
@@ -111,14 +114,24 @@ const TimerScreen = () => {
             <View style={styles.controlBar}>
                 <TouchableOpacity onPress={playPauseHandler}>
                     <Ionicons
-                        name={isRunning ? "md-pause" : "md-play"}
+                        name={
+                            Platform.OS === "android"
+                                ? isRunning
+                                    ? "md-pause"
+                                    : "md-play"
+                                : isRunning
+                                ? "ios-pause"
+                                : "ios-play"
+                        }
                         size={48}
                         color={ColorConstants.Notice}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={stopHandler}>
                     <Ionicons
-                        name="md-stop"
+                        name={
+                            Platform.OS === "android" ? "md-stop" : "ios-stop"
+                        }
                         size={48}
                         color={ColorConstants.Notice}
                     />
@@ -131,19 +144,21 @@ const TimerScreen = () => {
 export const ScreenOptions = (navData) => {
     return {
         headerTitle: "Simple Pomo",
-        headerLeft: (props) => (
-            <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                <Item
-                    title="Menu"
-                    iconName={
-                        Platform.OS === "android" ? "md-menu" : "ios-menu"
-                    }
-                    onPress={() => {
-                        navData.navigation.toggleDrawer();
-                    }}
-                />
-            </HeaderButtons>
-        ),
+        headerLeft: function menuButtonHandler(props) {
+            return (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                    <Item
+                        title="Menu"
+                        iconName={
+                            Platform.OS === "android" ? "md-menu" : "ios-menu"
+                        }
+                        onPress={() => {
+                            navData.navigation.toggleDrawer();
+                        }}
+                    />
+                </HeaderButtons>
+            );
+        },
     };
 };
 

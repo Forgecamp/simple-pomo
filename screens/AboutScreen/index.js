@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 // Core/First Party
 import React, { useState } from "react";
 import {
@@ -31,19 +30,21 @@ const AboutScreen = () => {
 export const ScreenOptions = (navData) => {
     return {
         headerTitle: "About",
-        headerLeft: (props) => (
-            <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                <Item
-                    title="About"
-                    iconName={
-                        Platform.OS === "android" ? "md-menu" : "ios-menu"
-                    }
-                    onPress={() => {
-                        navData.navigation.toggleDrawer();
-                    }}
-                />
-            </HeaderButtons>
-        ),
+        headerLeft: function menuButtonHandler(props) {
+            return (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                    <Item
+                        title="Menu"
+                        iconName={
+                            Platform.OS === "android" ? "md-menu" : "ios-menu"
+                        }
+                        onPress={() => {
+                            navData.navigation.toggleDrawer();
+                        }}
+                    />
+                </HeaderButtons>
+            );
+        },
     };
 };
 
