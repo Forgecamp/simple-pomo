@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 // Core/First Party
 import React, { useState } from "react";
 import {
@@ -10,9 +11,11 @@ import {
     Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-// Additional Modules/Components
 // Third Party Packages
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+// Additional Modules/Components
+import HeaderButton from "../../shared/components/UI/HeaderButton";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorConstants from "../../shared/constants/Colors";
@@ -75,17 +78,19 @@ const TimerScreen = () => {
                             .padStart(2, "0");
                         return (
                             <View style={styles.timerInterior}>
-                                <Ionicons
-                                    name="md-reload"
-                                    size={24}
-                                    color={ColorConstants.Notice}
-                                    style={{ display: "none" }}
-                                />
+                                <Animated.Text
+                                    style={{
+                                        color: animatedColor,
+                                        ...styles.interiorTask,
+                                    }}
+                                >
+                                    Placeholder Text
+                                </Animated.Text>
                                 <TouchableOpacity onPress={playPauseHandler}>
                                     <Animated.Text
                                         style={{
                                             color: animatedColor,
-                                            ...styles.interiorText,
+                                            ...styles.interiorCounter,
                                         }}
                                     >
                                         {minutes} : {seconds}
@@ -96,7 +101,6 @@ const TimerScreen = () => {
                                         name="md-reload"
                                         size={24}
                                         color={ColorConstants.Notice}
-                                        style={{ paddingTop: 15 }}
                                     />
                                 </TouchableOpacity>
                             </View>
@@ -124,23 +128,47 @@ const TimerScreen = () => {
     );
 };
 
+export const ScreenOptions = (navData) => {
+    return {
+        headerTitle: "Simple Pomo",
+        headerLeft: (props) => (
+            <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                <Item
+                    title="Menu"
+                    iconName={
+                        Platform.OS === "android" ? "md-menu" : "ios-menu"
+                    }
+                    onPress={() => {
+                        navData.navigation.toggleDrawer();
+                    }}
+                />
+            </HeaderButtons>
+        ),
+    };
+};
+
 const styles = StyleSheet.create({
     main: {
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "center",
-        marginTop: 2.5 * ExpoConstants.statusBarHeight,
+        marginTop: 3 * ExpoConstants.statusBarHeight,
         backgroundColor: "#ecf0f1",
     },
-    interiorText: {
+    interiorCounter: {
+        padding: 5,
         fontSize: 24,
+    },
+    interiorTask: {
+        fontSize: 18,
     },
     timerInterior: {
         alignItems: "center",
         justifyContent: "space-evenly",
         flexDirection: "column",
         width: "100%",
-        paddingTop: 42,
+        paddingTop: 12,
+        height: "80%",
     },
     controlBar: {
         flexDirection: "row",
