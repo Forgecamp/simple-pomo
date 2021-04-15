@@ -8,11 +8,14 @@ import {
     Button,
     Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import HeaderButton from "../../shared/components/UI/HeaderButton";
 // Additional Modules/Components
 import MenuButton from "../../shared/components/UI/MenuButton";
 // Constants
-import * as ColorConstant from "../../shared/constants/Colors";
+import * as ColorConstants from "../../shared/constants/Colors";
 
 const UserPreferencesScreen = () => {
     return (
@@ -45,7 +48,7 @@ const UserPreferencesScreen = () => {
                         <Button
                             title="Logout"
                             titleStyle={styles.logoutButton}
-                            color={ColorConstant.Caution}
+                            color={ColorConstants.Caution}
                         />
                     </View>
                 </View>
@@ -88,6 +91,26 @@ export const ScreenOptions = (navData) => {
     return {
         headerTitle: "Preferences",
         headerLeft: () => MenuButton(navData),
+        headerRight: function SaveButton(navData) {
+            return (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                    <Item
+                        title="Menu"
+                        iconName={
+                            Platform.OS === "android" ? "md-save" : "ios-save"
+                        }
+                        onPress={() => {
+                            console.log("save");
+                        }}
+                        color={
+                            Platform.OS === "android"
+                                ? "white"
+                                : ColorConstants.Notice
+                        }
+                    />
+                </HeaderButtons>
+            );
+        },
     };
 };
 
