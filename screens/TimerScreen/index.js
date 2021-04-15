@@ -5,16 +5,14 @@ import {
     StyleSheet,
     Animated,
     Platform,
-    Text,
     TouchableOpacity,
     Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
 // Additional Modules/Components
-import HeaderButton from "../../shared/components/UI/HeaderButton";
+import MenuButton from "../../shared/components/UI/MenuButton";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorConstants from "../../shared/constants/Colors";
@@ -144,21 +142,7 @@ const TimerScreen = () => {
 export const ScreenOptions = (navData) => {
     return {
         headerTitle: "Simple Pomo",
-        headerLeft: function menuButtonHandler(props) {
-            return (
-                <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                    <Item
-                        title="Menu"
-                        iconName={
-                            Platform.OS === "android" ? "md-menu" : "ios-menu"
-                        }
-                        onPress={() => {
-                            navData.navigation.toggleDrawer();
-                        }}
-                    />
-                </HeaderButtons>
-            );
-        },
+        headerLeft: () => MenuButton(navData),
     };
 };
 

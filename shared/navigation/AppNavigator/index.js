@@ -22,7 +22,8 @@ const AppDrawerNavigator = createDrawerNavigator();
 
 const defaultScreenOptions = {
     headerStyle: {
-        backgroundColor: ColorConstants.Notice,
+        backgroundColor:
+            Platform.OS === "android" ? ColorConstants.Notice : "white",
     },
     headerTintColor:
         Platform.OS === "android" ? "white" : ColorConstants.Notice,
