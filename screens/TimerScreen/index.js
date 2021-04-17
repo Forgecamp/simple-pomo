@@ -1,55 +1,90 @@
 // Core/First Party
 import React, { useState } from "react";
-import {
-    View,
-    StyleSheet,
-    Animated,
-    Platform,
-    TouchableOpacity,
-    Alert,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, StyleSheet, Alert } from "react-native";
 // Third Party Packages
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 // Additional Modules/Components
+import Timer from "./timer";
+import ControlBar from "./controlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
 // Constants
 import ExpoConstants from "expo-constants";
-import * as ColorConstants from "../../shared/constants/Colors";
+
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
 
 const TimerScreen = () => {
-    const [startingTime, setStartingTime] = useState(900);
-    const [startingDuration, setStartingDuration] = useState(900);
+    const [focusLength, setFocusLength] = useState(1500);
+    const [shortBreakLength, setShortBreakLength] = useState(300);
+    const [longBreakLength, setLongBreakLength] = useState(900);
+    const [breakLength, setBreakLength] = useState(300);
+    const [timeElapsed, setTimeElapsed] = useState(0);
+    const [startTime, setStartTime] = useState(null);
+    const [completedBreaks, setCompletedBreaks] = useState(0);
+    const [notificationId, setNotificationId] = useState(null);
+    const [isBreak, setIsBreak] = useState(false);
     const [key, setKey] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
 
     const resetTimerHandler = () => {
         setIsRunning(() => false);
         setKey((prevKey) => prevKey + 1);
+        setTimeElapsed(() => 0);
     };
 
-    const playPauseHandler = () => {
-        setIsRunning((prevStatus) => !prevStatus);
+    const playPauseHandler = async () => {
+        const currTime = new Date().getTime();
+        if (isRunning) {
+            setIsRunning((prev) => !prev);
+            setTimeElapsed((prev) => prev + currTime - startTime);
+            await Notifications.cancelScheduledNotificationAsync(
+                notificationId
+            );
+        } else {
+            setStartTime(() => currTime);
+            const noteId = await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Time's Up!",
+                    body: "Time's Up!",
+                },
+                trigger:
+                    currTime + isBreak
+                        ? breakLength
+                        : focusLength - timeElapsed,
+            });
+            setNotificationId(() => noteId);
+            setIsRunning((prev) => !prev);
+        }
     };
 
     const stopHandler = () => {
+        const stopTimer = () => {
+            setIsRunning(() => false);
+            if (isBreak) {
+                let breaks = completedBreaks;
+                if (breaks >= 2) {
+                    setBreakLength(longBreakLength);
+                } else {
+                    setBreakLength(shortBreakLength);
+                }
+                if (breaks >= 2) breaks = -2;
+                setCompletedBreaks(() => breaks + 1);
+            }
+            setIsBreak((prevStatus) => !prevStatus);
+            setKey((prevKey) => prevKey + 1);
+            setTimeElapsed(() => 0);
+        };
+
         Alert.alert(
             "Stop Timer",
             "Stop the timer and complete the current period?",
             [
                 {
                     text: "Yes",
-                    onPress: () => {
-                        console.log("stop");
-                        setIsRunning(() => false);
-                        setKey((prevKey) => prevKey + 1);
-                    },
+                    onPress: stopTimer,
                 },
                 {
                     text: "No",
-                    onPress: () => {
-                        console.log("continue");
-                    },
+                    onPress: null,
                 },
             ]
         );
@@ -57,84 +92,18 @@ const TimerScreen = () => {
 
     return (
         <View style={styles.main}>
-            <View style={styles.timerFace}>
-                <CountdownCircleTimer
-                    key={key}
-                    isPlaying={isRunning}
-                    duration={startingDuration}
-                    initialRemainingTime={startingTime}
-                    colors={[[ColorConstants.Notice, 1.0]]}
-                    size={250}
-                >
-                    {({ remainingTime, animatedColor }) => {
-                        let minutes = Math.floor(remainingTime / 60)
-                            .toString()
-                            .padStart(2, "0");
-                        let seconds = (remainingTime % 60)
-                            .toString()
-                            .padStart(2, "0");
-                        return (
-                            <View style={styles.timerInterior}>
-                                <Animated.Text
-                                    style={{
-                                        color: animatedColor,
-                                        ...styles.interiorTask,
-                                    }}
-                                >
-                                    Placeholder Text
-                                </Animated.Text>
-                                <TouchableOpacity onPress={playPauseHandler}>
-                                    <Animated.Text
-                                        style={{
-                                            color: animatedColor,
-                                            ...styles.interiorCounter,
-                                        }}
-                                    >
-                                        {minutes} : {seconds}
-                                    </Animated.Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={resetTimerHandler}>
-                                    <Ionicons
-                                        name={
-                                            Platform.OS === "android"
-                                                ? "md-reload"
-                                                : "ios-reload"
-                                        }
-                                        size={24}
-                                        color={ColorConstants.Notice}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        );
-                    }}
-                </CountdownCircleTimer>
-            </View>
-            <View style={styles.controlBar}>
-                <TouchableOpacity onPress={playPauseHandler}>
-                    <Ionicons
-                        name={
-                            Platform.OS === "android"
-                                ? isRunning
-                                    ? "md-pause"
-                                    : "md-play"
-                                : isRunning
-                                ? "ios-pause"
-                                : "ios-play"
-                        }
-                        size={48}
-                        color={ColorConstants.Notice}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={stopHandler}>
-                    <Ionicons
-                        name={
-                            Platform.OS === "android" ? "md-stop" : "ios-stop"
-                        }
-                        size={48}
-                        color={ColorConstants.Notice}
-                    />
-                </TouchableOpacity>
-            </View>
+            <Timer
+                timerLength={isBreak ? breakLength : focusLength}
+                timerKey={key}
+                resetTimerHandler={resetTimerHandler}
+                playPauseHandler={playPauseHandler}
+                isRunning={isRunning}
+            />
+            <ControlBar
+                playPauseHandler={playPauseHandler}
+                stopHandler={stopHandler}
+                isRunning={isRunning}
+            />
         </View>
     );
 };
@@ -153,28 +122,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 3 * ExpoConstants.statusBarHeight,
         backgroundColor: "#ecf0f1",
-    },
-    interiorCounter: {
-        padding: 5,
-        fontSize: 24,
-    },
-    interiorTask: {
-        fontSize: 18,
-    },
-    timerInterior: {
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        flexDirection: "column",
-        width: "100%",
-        paddingTop: 12,
-        height: "80%",
-    },
-    controlBar: {
-        flexDirection: "row",
-        paddingTop: 25,
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        width: 200,
     },
 });
 
