@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AppNavigator } from "./shared/navigation/AppNavigator";
 import * as Notifications from "expo-notifications";
 

@@ -1,6 +1,8 @@
 // Core/First Party
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
 // Third Party Packages
 // Additional Modules/Components
 import Timer from "./timer";
@@ -9,14 +11,11 @@ import MenuButton from "../../shared/components/UI/MenuButton";
 // Constants
 import ExpoConstants from "expo-constants";
 
-import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
-
-const TimerScreen = () => {
-    const [focusLength, setFocusLength] = useState(1500);
-    const [shortBreakLength, setShortBreakLength] = useState(300);
-    const [longBreakLength, setLongBreakLength] = useState(900);
-    const [breakLength, setBreakLength] = useState(300);
+const TimerScreen = (props) => {
+    const [focusLength, setFocusLength] = useState(20);
+    const [shortBreakLength, setShortBreakLength] = useState(10);
+    const [longBreakLength, setLongBreakLength] = useState(15);
+    const [breakLength, setBreakLength] = useState(10);
     const [timeElapsed, setTimeElapsed] = useState(0);
     const [startTime, setStartTime] = useState(null);
     const [completedBreaks, setCompletedBreaks] = useState(0);
@@ -31,32 +30,7 @@ const TimerScreen = () => {
         setTimeElapsed(() => 0);
     };
 
-    const playPauseHandler = async () => {
-        const currTime = new Date().getTime();
-        if (isRunning) {
-            setIsRunning((prev) => !prev);
-            setTimeElapsed((prev) => prev + currTime - startTime);
-            await Notifications.cancelScheduledNotificationAsync(
-                notificationId
-            );
-        } else {
-            setStartTime(() => currTime);
-            const noteId = await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Time's Up!",
-                    body: "Time's Up!",
-                },
-                trigger:
-                    currTime + isBreak
-                        ? breakLength
-                        : focusLength - timeElapsed,
-            });
-            setNotificationId(() => noteId);
-            setIsRunning((prev) => !prev);
-        }
-    };
-
-    const stopHandler = () => {
+    const stopHandler = (skipAlert) => {
         const stopTimer = () => {
             setIsRunning(() => false);
             if (isBreak) {
@@ -74,6 +48,11 @@ const TimerScreen = () => {
             setTimeElapsed(() => 0);
         };
 
+        if (skipAlert) {
+            stopTimer();
+            return;
+        }
+
         Alert.alert(
             "Stop Timer",
             "Stop the timer and complete the current period?",
@@ -88,6 +67,30 @@ const TimerScreen = () => {
                 },
             ]
         );
+    };
+
+    const playPauseHandler = async () => {
+        const currTime = new Date().getTime();
+        if (isRunning) {
+            setIsRunning((prev) => !prev);
+            setTimeElapsed((prev) => prev + currTime - startTime);
+            await Notifications.cancelScheduledNotificationAsync(
+                notificationId
+            );
+        } else {
+            const offset = (isBreak ? breakLength : focusLength) - timeElapsed;
+            setStartTime(() => currTime);
+            const noteId = await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Time's Up!",
+                    body: "Time's Up!",
+                    data: { callback: stopHandler },
+                },
+                trigger: currTime + offset * 1000,
+            });
+            setNotificationId(() => noteId);
+            setIsRunning((prev) => !prev);
+        }
     };
 
     return (
