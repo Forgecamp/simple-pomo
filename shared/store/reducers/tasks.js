@@ -49,6 +49,7 @@ export default function (state = initialState, action) {
             updatedState.key = updatedState.key + 1;
             updatedState.timeElapsed = 0;
             return {
+                ...state,
                 ...updatedState,
             };
         }
@@ -65,7 +66,21 @@ export default function (state = initialState, action) {
                 updatedState.notificationId = action.noteId;
             }
             updatedState.isRunning = !updatedState.isRunning;
-            return { ...updatedState };
+            return {
+                ...state,
+                ...updatedState,
+            };
+        }
+        case RESET: {
+            const updatedState = { ...state };
+            updatedState.isRunning = false;
+            updatedState.key = updatedState.key + 1;
+            updatedState.timeElapsed = 0;
+
+            return {
+                ...state,
+                ...updatedState,
+            };
         }
     }
 

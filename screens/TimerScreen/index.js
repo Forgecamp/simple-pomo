@@ -1,5 +1,5 @@
 // Core/First Party
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import * as Notifications from "expo-notifications";
 // Third Party Packages
@@ -13,25 +13,12 @@ import * as taskActions from "../../shared/store/actions/tasks";
 import ExpoConstants from "expo-constants";
 
 const TimerScreen = (props) => {
-    const [focusLength, setFocusLength] = useState(20);
-    const [shortBreakLength, setShortBreakLength] = useState(10);
-    const [longBreakLength, setLongBreakLength] = useState(15);
-    const [breakLength, setBreakLength] = useState(10);
-    const [timeElapsed, setTimeElapsed] = useState(0);
-    const [startTime, setStartTime] = useState(null);
-    const [completedBreaks, setCompletedBreaks] = useState(0);
-    const [notificationId, setNotificationId] = useState(null);
-    const [isBreak, setIsBreak] = useState(false);
-    const [key, setKey] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
-
     const dispatch = useDispatch();
     const stateSlice = useSelector((state) => state.tasks);
 
-    const resetTimerHandler = () => {
-        setIsRunning(() => false);
-        setKey((prevKey) => prevKey + 1);
-        setTimeElapsed(() => 0);
+    const resetTimerHandler = async () => {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+        dispatch(taskActions.reset());
     };
 
     const stopHandler = (skipAlert = false) => {
