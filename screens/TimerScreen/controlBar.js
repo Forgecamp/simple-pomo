@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // Core/First Party
 import React from "react";
 import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";

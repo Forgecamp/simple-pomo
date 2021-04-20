@@ -1,13 +1,14 @@
 // Core/First Party
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
 // Third Party Packages
+import { useDispatch, useSelector } from "react-redux";
 // Additional Modules/Components
 import Timer from "./timer";
 import ControlBar from "./controlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
+import * as taskActions from "../../shared/store/actions/tasks";
 // Constants
 import ExpoConstants from "expo-constants";
 
@@ -24,32 +25,18 @@ const TimerScreen = (props) => {
     const [key, setKey] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
 
+    const dispatch = useDispatch();
+    const stateSlice = useSelector((state) => state.tasks);
+
     const resetTimerHandler = () => {
         setIsRunning(() => false);
         setKey((prevKey) => prevKey + 1);
         setTimeElapsed(() => 0);
     };
 
-    const stopHandler = (skipAlert) => {
-        const stopTimer = () => {
-            setIsRunning(() => false);
-            if (isBreak) {
-                let breaks = completedBreaks;
-                if (breaks >= 2) {
-                    setBreakLength(longBreakLength);
-                } else {
-                    setBreakLength(shortBreakLength);
-                }
-                if (breaks >= 2) breaks = -2;
-                setCompletedBreaks(() => breaks + 1);
-            }
-            setIsBreak((prevStatus) => !prevStatus);
-            setKey((prevKey) => prevKey + 1);
-            setTimeElapsed(() => 0);
-        };
-
+    const stopHandler = (skipAlert = false) => {
         if (skipAlert) {
-            stopTimer();
+            dispatch(taskActions.stop());
             return;
         }
 
@@ -59,11 +46,12 @@ const TimerScreen = (props) => {
             [
                 {
                     text: "Yes",
-                    onPress: stopTimer,
+                    onPress: () => {
+                        dispatch(taskActions.stop());
+                    },
                 },
                 {
                     text: "No",
-                    onPress: null,
                 },
             ]
         );
@@ -71,41 +59,43 @@ const TimerScreen = (props) => {
 
     const playPauseHandler = async () => {
         const currTime = new Date().getTime();
-        if (isRunning) {
-            setIsRunning((prev) => !prev);
-            setTimeElapsed((prev) => prev + currTime - startTime);
-            await Notifications.cancelScheduledNotificationAsync(
-                notificationId
-            );
+        if (stateSlice.isRunning) {
+            await Notifications.cancelAllScheduledNotificationsAsync();
+            dispatch(taskActions.playPauseToggle());
         } else {
-            const offset = (isBreak ? breakLength : focusLength) - timeElapsed;
-            setStartTime(() => currTime);
+            const offset =
+                (stateSlice.isBreak
+                    ? stateSlice.breakLength
+                    : stateSlice.focusLength) -
+                stateSlice.timeElapsed / 1000;
             const noteId = await Notifications.scheduleNotificationAsync({
                 content: {
                     title: "Time's Up!",
                     body: "Time's Up!",
-                    data: { callback: stopHandler },
                 },
                 trigger: currTime + offset * 1000,
             });
-            setNotificationId(() => noteId);
-            setIsRunning((prev) => !prev);
+            dispatch(taskActions.playPauseToggle(noteId));
         }
     };
 
     return (
         <View style={styles.main}>
             <Timer
-                timerLength={isBreak ? breakLength : focusLength}
-                timerKey={key}
+                timerLength={
+                    stateSlice.isBreak
+                        ? stateSlice.breakLength
+                        : stateSlice.focusLength
+                }
+                timerKey={stateSlice.key}
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                isRunning={isRunning}
+                isRunning={stateSlice.isRunning}
             />
             <ControlBar
                 playPauseHandler={playPauseHandler}
-                stopHandler={stopHandler}
-                isRunning={isRunning}
+                stopHandler={() => stopHandler()}
+                isRunning={stateSlice.isRunning}
             />
         </View>
     );
