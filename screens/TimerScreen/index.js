@@ -1,38 +1,61 @@
 // Core/First Party
-import React, { useState } from "react";
-import {
-    View,
-    StyleSheet,
-    Animated,
-    Platform,
-    TouchableOpacity,
-    Alert,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useRef } from "react";
+import { View, StyleSheet, Alert, AppState } from "react-native";
+import * as Notifications from "expo-notifications";
 // Third Party Packages
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { useDispatch, useSelector } from "react-redux";
 // Additional Modules/Components
+import Timer from "./timer";
+import ControlBar from "./controlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
+import * as taskActions from "../../shared/store/actions/tasks";
 // Constants
 import ExpoConstants from "expo-constants";
-import * as ColorConstants from "../../shared/constants/Colors";
+import * as ColorsConstant from "../../shared/constants/Colors";
 
-const TimerScreen = () => {
-    const [startingTime, setStartingTime] = useState(900);
-    const [startingDuration, setStartingDuration] = useState(900);
-    const [key, setKey] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
+const TimerScreen = (props) => {
+    const dispatch = useDispatch();
+    const stateSlice = useSelector((state) => state.tasks);
+    const appState = useRef(AppState.currentState);
 
-    const resetTimerHandler = () => {
-        setIsRunning(() => false);
-        setKey((prevKey) => prevKey + 1);
+    const endTime = stateSlice.endTime;
+    const timerRunning = stateSlice.isRunning;
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => {
+            timerEndHandler();
+            return { shouldShowAlert: true };
+        },
+    });
+
+    useEffect(() => {
+        AppState.addEventListener("change", () => {
+            timerEndHandler();
+        });
+
+        return () => {
+            AppState.removeEventListener("change", () => {
+                timerEndHandler();
+            });
+        };
+    }, [endTime, timerRunning, stopHandler, timerEndHandler]);
+
+    const timerEndHandler = useCallback(() => {
+        if (endTime === null) return;
+        if (timerRunning && endTime <= new Date().getTime()) stopHandler(true);
+    }, [endTime, timerRunning, stopHandler]);
+
+    const resetTimerHandler = async () => {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+        dispatch(taskActions.reset());
     };
 
-    const playPauseHandler = () => {
-        setIsRunning((prevStatus) => !prevStatus);
-    };
+    const stopHandler = (skipAlert = false) => {
+        if (skipAlert) {
+            dispatch(taskActions.stop());
+            return;
+        }
 
-    const stopHandler = () => {
         Alert.alert(
             "Stop Timer",
             "Stop the timer and complete the current period?",
@@ -40,101 +63,69 @@ const TimerScreen = () => {
                 {
                     text: "Yes",
                     onPress: () => {
-                        console.log("stop");
-                        setIsRunning(() => false);
-                        setKey((prevKey) => prevKey + 1);
+                        dispatch(taskActions.stop());
                     },
                 },
                 {
                     text: "No",
-                    onPress: () => {
-                        console.log("continue");
-                    },
                 },
             ]
         );
     };
 
+    const playPauseHandler = async () => {
+        const currTime = new Date().getTime();
+        const offset =
+            (stateSlice.isBreak
+                ? stateSlice.breakLength
+                : stateSlice.focusLength) -
+            stateSlice.timeElapsed / 1000;
+        if (stateSlice.isRunning) {
+            await Notifications.cancelAllScheduledNotificationsAsync();
+            dispatch(taskActions.playPauseToggle());
+        } else {
+            const noteId = await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Time's Up!",
+                    body: "Time's Up!",
+                },
+                trigger: currTime + offset * 1000,
+            });
+            dispatch(
+                taskActions.playPauseToggle(noteId, currTime + offset * 1000)
+            );
+        }
+    };
+
     return (
         <View style={styles.main}>
-            <View style={styles.timerFace}>
-                <CountdownCircleTimer
-                    key={key}
-                    isPlaying={isRunning}
-                    duration={startingDuration}
-                    initialRemainingTime={startingTime}
-                    colors={[[ColorConstants.Notice, 1.0]]}
-                    size={250}
-                >
-                    {({ remainingTime, animatedColor }) => {
-                        let minutes = Math.floor(remainingTime / 60)
-                            .toString()
-                            .padStart(2, "0");
-                        let seconds = (remainingTime % 60)
-                            .toString()
-                            .padStart(2, "0");
-                        return (
-                            <View style={styles.timerInterior}>
-                                <Animated.Text
-                                    style={{
-                                        color: animatedColor,
-                                        ...styles.interiorTask,
-                                    }}
-                                >
-                                    Placeholder Text
-                                </Animated.Text>
-                                <TouchableOpacity onPress={playPauseHandler}>
-                                    <Animated.Text
-                                        style={{
-                                            color: animatedColor,
-                                            ...styles.interiorCounter,
-                                        }}
-                                    >
-                                        {minutes} : {seconds}
-                                    </Animated.Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={resetTimerHandler}>
-                                    <Ionicons
-                                        name={
-                                            Platform.OS === "android"
-                                                ? "md-reload"
-                                                : "ios-reload"
-                                        }
-                                        size={24}
-                                        color={ColorConstants.Notice}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        );
-                    }}
-                </CountdownCircleTimer>
-            </View>
-            <View style={styles.controlBar}>
-                <TouchableOpacity onPress={playPauseHandler}>
-                    <Ionicons
-                        name={
-                            Platform.OS === "android"
-                                ? isRunning
-                                    ? "md-pause"
-                                    : "md-play"
-                                : isRunning
-                                ? "ios-pause"
-                                : "ios-play"
-                        }
-                        size={48}
-                        color={ColorConstants.Notice}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={stopHandler}>
-                    <Ionicons
-                        name={
-                            Platform.OS === "android" ? "md-stop" : "ios-stop"
-                        }
-                        size={48}
-                        color={ColorConstants.Notice}
-                    />
-                </TouchableOpacity>
-            </View>
+            <Timer
+                timerLength={
+                    stateSlice.isBreak
+                        ? stateSlice.breakLength
+                        : stateSlice.focusLength
+                }
+                timerKey={stateSlice.key}
+                resetTimerHandler={resetTimerHandler}
+                playPauseHandler={playPauseHandler}
+                isRunning={stateSlice.isRunning}
+                color={
+                    stateSlice.isBreak
+                        ? ColorsConstant.Success
+                        : ColorsConstant.Notice
+                }
+                title={stateSlice.isBreak ? "Break" : "Focus"}
+            />
+            <ControlBar
+                playPauseHandler={playPauseHandler}
+                stopHandler={() => stopHandler()}
+                isRunning={stateSlice.isRunning}
+                color={
+                    stateSlice.isBreak
+                        ? ColorsConstant.Success
+                        : ColorsConstant.Notice
+                }
+            />
         </View>
     );
 };
@@ -153,28 +144,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 3 * ExpoConstants.statusBarHeight,
         backgroundColor: "#ecf0f1",
-    },
-    interiorCounter: {
-        padding: 5,
-        fontSize: 24,
-    },
-    interiorTask: {
-        fontSize: 18,
-    },
-    timerInterior: {
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        flexDirection: "column",
-        width: "100%",
-        paddingTop: 12,
-        height: "80%",
-    },
-    controlBar: {
-        flexDirection: "row",
-        paddingTop: 25,
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        width: 200,
     },
 });
 

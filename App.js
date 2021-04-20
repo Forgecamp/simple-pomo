@@ -1,17 +1,26 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import { AppNavigator } from "./shared/navigation/AppNavigator";
+import * as Notifications from "expo-notifications";
+import { createStore, combineReducers } from "redux";
+import { Provider } from "react-redux";
+import tasksReducer from "./shared/store/reducers/tasks";
+
+// Notifications.setNotificationHandler({
+//     handleNotification: async () => {
+//         return { shouldShowAlert: true };
+//     },
+// });
+
+const rootReducer = combineReducers({
+    tasks: tasksReducer,
+});
+
+const store = createStore(rootReducer);
 
 export default function App() {
-    return <AppNavigator />;
+    return (
+        <Provider store={store}>
+            <AppNavigator />
+        </Provider>
+    );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-});
