@@ -11,6 +11,7 @@ import MenuButton from "../../shared/components/UI/MenuButton";
 import * as taskActions from "../../shared/store/actions/tasks";
 // Constants
 import ExpoConstants from "expo-constants";
+import * as ColorsConstant from "../../shared/constants/Colors";
 
 const TimerScreen = (props) => {
     const dispatch = useDispatch();
@@ -108,11 +109,22 @@ const TimerScreen = (props) => {
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
                 isRunning={stateSlice.isRunning}
+                color={
+                    stateSlice.isBreak
+                        ? ColorsConstant.Success
+                        : ColorsConstant.Notice
+                }
+                title={stateSlice.isBreak ? "Break" : "Focus"}
             />
             <ControlBar
                 playPauseHandler={playPauseHandler}
                 stopHandler={() => stopHandler()}
                 isRunning={stateSlice.isRunning}
+                color={
+                    stateSlice.isBreak
+                        ? ColorsConstant.Success
+                        : ColorsConstant.Notice
+                }
             />
         </View>
     );

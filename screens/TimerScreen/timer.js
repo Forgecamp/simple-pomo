@@ -13,7 +13,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 // Additional Modules/Components
 // Constants
-import * as ColorConstants from "../../shared/constants/Colors";
 
 const Timer = (props) => {
     return (
@@ -22,8 +21,7 @@ const Timer = (props) => {
                 key={props.timerKey}
                 isPlaying={props.isRunning}
                 duration={props.timerLength}
-                // initialRemainingTime={props.timerStart}
-                colors={[[ColorConstants.Notice, 1.0]]}
+                colors={[[props.color, 1.0]]}
                 size={250}
             >
                 {({ remainingTime, animatedColor }) => {
@@ -41,7 +39,7 @@ const Timer = (props) => {
                                     ...styles.interiorTask,
                                 }}
                             >
-                                Placeholder Text
+                                {props.title}
                             </Animated.Text>
                             <TouchableOpacity onPress={props.playPauseHandler}>
                                 <Animated.Text
@@ -61,7 +59,7 @@ const Timer = (props) => {
                                             : "ios-reload"
                                     }
                                     size={24}
-                                    color={ColorConstants.Notice}
+                                    color={props.color}
                                 />
                             </TouchableOpacity>
                         </View>

@@ -4,7 +4,6 @@ import React from "react";
 import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
-import * as ColorConstants from "../../shared/constants/Colors";
 
 const ControlBar = (props) => {
     return (
@@ -21,14 +20,14 @@ const ControlBar = (props) => {
                             : "ios-play"
                     }
                     size={48}
-                    color={ColorConstants.Notice}
+                    color={props.color}
                 />
             </TouchableOpacity>
             <TouchableOpacity onPress={props.stopHandler}>
                 <Ionicons
                     name={Platform.OS === "android" ? "md-stop" : "ios-stop"}
                     size={48}
-                    color={ColorConstants.Notice}
+                    color={props.color}
                 />
             </TouchableOpacity>
         </View>

@@ -1,7 +1,7 @@
 // TODO: Basic stack and drawer navigatiors that lead to placeholder pages.
 import React from "react";
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+import { useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -14,20 +14,22 @@ import AboutScreen, {
 import UserPreferencesScreen, {
     ScreenOptions as PrefsScreenOptions,
 } from "../../../screens/UserPreferencesScreen";
-import * as ColorConstants from "../../constants/Colors";
+import * as ColorsConstants from "../../constants/Colors";
 
 const TimerStackNavigator = createStackNavigator();
 const AboutStackNavigator = createStackNavigator();
 const UserPrefsStackNavigator = createStackNavigator();
 const AppDrawerNavigator = createDrawerNavigator();
 
-const defaultScreenOptions = {
-    headerStyle: {
-        backgroundColor:
-            Platform.OS === "android" ? ColorConstants.Notice : "white",
-    },
-    headerTintColor:
-        Platform.OS === "android" ? "white" : ColorConstants.Notice,
+const defaultScreenOptions = () => {
+    const isBreak = useSelector((state) => state.tasks.isBreak);
+    const color = isBreak ? ColorsConstants.Success : ColorsConstants.Notice;
+    return {
+        headerStyle: {
+            backgroundColor: Platform.OS === "android" ? color : "white",
+        },
+        headerTintColor: Platform.OS === "android" ? "white" : color,
+    };
 };
 
 const TimerNavigator = () => {
@@ -71,7 +73,7 @@ export const AppNavigator = () => {
         <NavigationContainer>
             <AppDrawerNavigator.Navigator
                 drawerContentOptions={{
-                    activeTintColor: ColorConstants.Notice,
+                    activeTintColor: ColorsConstants.Notice,
                 }}
             >
                 <AppDrawerNavigator.Screen
