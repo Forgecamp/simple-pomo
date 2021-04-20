@@ -1,6 +1,6 @@
 // Core/First Party
-import React from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import React, { useCallback, useEffect, useRef } from "react";
+import { View, StyleSheet, Alert, AppState } from "react-native";
 import * as Notifications from "expo-notifications";
 // Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,34 @@ import ExpoConstants from "expo-constants";
 const TimerScreen = (props) => {
     const dispatch = useDispatch();
     const stateSlice = useSelector((state) => state.tasks);
+    const appState = useRef(AppState.currentState);
+
+    const endTime = stateSlice.endTime;
+    const timerRunning = stateSlice.isRunning;
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => {
+            timerEndHandler();
+            return { shouldShowAlert: true };
+        },
+    });
+
+    useEffect(() => {
+        AppState.addEventListener("change", () => {
+            timerEndHandler();
+        });
+
+        return () => {
+            AppState.removeEventListener("change", () => {
+                timerEndHandler();
+            });
+        };
+    }, [endTime, timerRunning, stopHandler, timerEndHandler]);
+
+    const timerEndHandler = useCallback(() => {
+        if (endTime === null) return;
+        if (timerRunning && endTime <= new Date().getTime()) stopHandler(true);
+    }, [endTime, timerRunning, stopHandler]);
 
     const resetTimerHandler = async () => {
         await Notifications.cancelAllScheduledNotificationsAsync();
@@ -46,15 +74,15 @@ const TimerScreen = (props) => {
 
     const playPauseHandler = async () => {
         const currTime = new Date().getTime();
+        const offset =
+            (stateSlice.isBreak
+                ? stateSlice.breakLength
+                : stateSlice.focusLength) -
+            stateSlice.timeElapsed / 1000;
         if (stateSlice.isRunning) {
             await Notifications.cancelAllScheduledNotificationsAsync();
             dispatch(taskActions.playPauseToggle());
         } else {
-            const offset =
-                (stateSlice.isBreak
-                    ? stateSlice.breakLength
-                    : stateSlice.focusLength) -
-                stateSlice.timeElapsed / 1000;
             const noteId = await Notifications.scheduleNotificationAsync({
                 content: {
                     title: "Time's Up!",
@@ -62,7 +90,9 @@ const TimerScreen = (props) => {
                 },
                 trigger: currTime + offset * 1000,
             });
-            dispatch(taskActions.playPauseToggle(noteId));
+            dispatch(
+                taskActions.playPauseToggle(noteId, currTime + offset * 1000)
+            );
         }
     };
 

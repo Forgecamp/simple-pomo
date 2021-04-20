@@ -5,11 +5,11 @@ import { createStore, combineReducers } from "redux";
 import { Provider } from "react-redux";
 import tasksReducer from "./shared/store/reducers/tasks";
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => {
-        return { shouldShowAlert: true };
-    },
-});
+// Notifications.setNotificationHandler({
+//     handleNotification: async () => {
+//         return { shouldShowAlert: true };
+//     },
+// });
 
 const rootReducer = combineReducers({
     tasks: tasksReducer,

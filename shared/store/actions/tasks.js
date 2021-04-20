@@ -6,10 +6,11 @@ export const REMOVE_TASK = "REMOVE_TASK";
 export const COMPLETE_TASK = "COMPLETE_TASK";
 export const EDIT_TASK = "EDIT_TASK";
 
-export const playPauseToggle = (noteId = false) => {
+export const playPauseToggle = (noteId = false, endTime = null) => {
     return {
         type: PLAY_PAUSE_TOGGLE,
         noteId: noteId,
+        endTime: endTime,
     };
 };
 

@@ -16,6 +16,7 @@ const initialState = {
     breakLength: 10,
     timeElapsed: 0,
     startTime: null,
+    endTime: null,
     completedBreaks: 0,
     notificationId: null,
     isBreak: false,
@@ -48,6 +49,8 @@ export default function (state = initialState, action) {
             updatedState.isBreak = !state.isBreak;
             updatedState.key = updatedState.key + 1;
             updatedState.timeElapsed = 0;
+            updatedState.endTime = null;
+            updatedState.startTime = null;
             return {
                 ...state,
                 ...updatedState,
@@ -63,6 +66,7 @@ export default function (state = initialState, action) {
                     updatedState.startTime;
             } else {
                 updatedState.startTime = currTime;
+                updatedState.endTime = action.endTime;
                 updatedState.notificationId = action.noteId;
             }
             updatedState.isRunning = !updatedState.isRunning;
