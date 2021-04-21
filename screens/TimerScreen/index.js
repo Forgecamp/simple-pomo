@@ -12,6 +12,7 @@ import * as taskActions from "../../shared/store/actions/tasks";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
+import * as Permissions from "expo-permissions";
 
 const TimerScreen = (props) => {
     const dispatch = useDispatch();
@@ -21,29 +22,30 @@ const TimerScreen = (props) => {
     const endTime = stateSlice.endTime;
     const timerRunning = stateSlice.isRunning;
 
-    Notifications.setNotificationHandler({
-        handleNotification: async () => {
-            timerEndHandler();
-            return { shouldShowAlert: true };
-        },
-    });
+    // Notifications.setNotificationHandler({
+    //     handleNotification: async () => {
+    //         console.log("yo");
+    //         timerEndHandler();
+    //         return { shouldShowAlert: true };
+    //     },
+    // });
 
-    useEffect(() => {
-        AppState.addEventListener("change", () => {
-            timerEndHandler();
-        });
+    // useEffect(() => {
+    //     AppState.addEventListener("change", () => {
+    //         timerEndHandler();
+    //     });
 
-        return () => {
-            AppState.removeEventListener("change", () => {
-                timerEndHandler();
-            });
-        };
-    }, [endTime, timerRunning, stopHandler, timerEndHandler]);
+    //     return () => {
+    //         AppState.removeEventListener("change", () => {
+    //             timerEndHandler();
+    //         });
+    //     };
+    // }, [endTime, timerRunning, stopHandler, timerEndHandler]);
 
-    const timerEndHandler = useCallback(() => {
-        if (endTime === null) return;
-        if (timerRunning && endTime <= new Date().getTime()) stopHandler(true);
-    }, [endTime, timerRunning, stopHandler]);
+    // const timerEndHandler = useCallback(() => {
+    //     if (endTime === null) return;
+    //     if (timerRunning && endTime <= new Date().getTime()) stopHandler(true);
+    // }, [endTime, timerRunning, stopHandler]);
 
     const resetTimerHandler = async () => {
         await Notifications.cancelAllScheduledNotificationsAsync();
@@ -74,6 +76,13 @@ const TimerScreen = (props) => {
     };
 
     const playPauseHandler = async () => {
+        let notificationPermission = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        if (notificationPermission.status !== "granted")
+            notificationPermission = await Permissions.getAsync(
+                Permissions.NOTIFICATIONS
+            );
         const currTime = new Date().getTime();
         const offset =
             (stateSlice.isBreak
@@ -84,16 +93,14 @@ const TimerScreen = (props) => {
             await Notifications.cancelAllScheduledNotificationsAsync();
             dispatch(taskActions.playPauseToggle());
         } else {
-            const noteId = await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Time's Up!",
-                    body: "Time's Up!",
-                },
-                trigger: currTime + offset * 1000,
-            });
-            dispatch(
-                taskActions.playPauseToggle(noteId, currTime + offset * 1000)
-            );
+            // const noteId = await Notifications.scheduleNotificationAsync({
+            //     content: {
+            //         title: "Time's Up!",
+            //         body: "Time's Up!",
+            //     },
+            //     trigger: currTime + offset * 1000,
+            // });
+            dispatch(taskActions.playPauseToggle(1, currTime + offset * 1000));
         }
     };
 
@@ -115,6 +122,9 @@ const TimerScreen = (props) => {
                         : ColorsConstant.Notice
                 }
                 title={stateSlice.isBreak ? "Break" : "Focus"}
+                onComplete={() => {
+                    stopHandler(true);
+                }}
             />
             <ControlBar
                 playPauseHandler={playPauseHandler}

@@ -23,6 +23,7 @@ const Timer = (props) => {
                 duration={props.timerLength}
                 colors={[[props.color, 1.0]]}
                 size={250}
+                onComplete={props.onComplete}
             >
                 {({ remainingTime, animatedColor }) => {
                     let minutes = Math.floor(remainingTime / 60)

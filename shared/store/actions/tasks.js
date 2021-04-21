@@ -15,6 +15,7 @@ export const playPauseToggle = (noteId = false, endTime = null) => {
 };
 
 export const stop = () => {
+    console.log("ye");
     return {
         type: STOP,
     };
