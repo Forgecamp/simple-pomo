@@ -1,7 +1,6 @@
 // Core/First Party
 import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import * as Notifications from "expo-notifications";
 // Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
 // Additional Modules/Components
@@ -12,20 +11,12 @@ import * as taskActions from "../../shared/store/actions/tasks";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
-import * as Permissions from "expo-permissions";
 
 const TimerScreen = (props) => {
     const dispatch = useDispatch();
     const stateSlice = useSelector((state) => state.tasks);
 
-    Notifications.setNotificationHandler({
-        handleNotification: async () => {
-            return { shouldShowAlert: true };
-        },
-    });
-
     const resetTimerHandler = async () => {
-        await Notifications.cancelAllScheduledNotificationsAsync();
         dispatch(taskActions.reset());
     };
 
@@ -53,13 +44,6 @@ const TimerScreen = (props) => {
     };
 
     const playPauseHandler = async () => {
-        let notificationPermission = await Permissions.getAsync(
-            Permissions.NOTIFICATIONS
-        );
-        if (notificationPermission.status !== "granted")
-            notificationPermission = await Permissions.getAsync(
-                Permissions.NOTIFICATIONS
-            );
         const currTime = new Date().getTime();
         const offset =
             (stateSlice.isBreak
@@ -67,19 +51,9 @@ const TimerScreen = (props) => {
                 : stateSlice.focusLength) -
             stateSlice.timeElapsed / 1000;
         if (stateSlice.isRunning) {
-            await Notifications.cancelAllScheduledNotificationsAsync();
-            dispatch(taskActions.playPauseToggle());
+            dispatch(taskActions.playPause());
         } else {
-            const noteId = await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Time's Up!",
-                    body: "Time's Up!",
-                },
-                trigger: currTime + offset * 1000,
-            });
-            dispatch(
-                taskActions.playPauseToggle(noteId, currTime + offset * 1000)
-            );
+            dispatch(taskActions.playPause(currTime + offset * 1000));
         }
     };
 
