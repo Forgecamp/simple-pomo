@@ -1,5 +1,4 @@
 import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
 
 export const PLAY_PAUSE_TOGGLE = "PLAY_PAUSE_TOGGLE";
 export const STOP = "STOP";
@@ -13,23 +12,20 @@ export const playPause = (endTime = null) => {
     return async (dispatch) => {
         let noteId = null;
         if (endTime) {
-            let notificationPermission = await Permissions.getAsync(
-                Permissions.NOTIFICATIONS
-            );
-            if (notificationPermission.status !== "granted") {
-                notificationPermission = await Permissions.getAsync(
-                    Permissions.NOTIFICATIONS
-                );
-            }
-            if (notificationPermission.status === "granted") {
-                noteId = await Notifications.scheduleNotificationAsync({
-                    content: {
-                        title: "Time's Up!",
-                        body: "Time's Up!",
-                    },
-                    trigger: endTime,
+            let permission = await Notifications.getPermissionsAsync();
+            if (permission.status === "undetermined") {
+                permission = await Notifications.requestPermissionsAsync({
+                    ios: { allowAlert: true, allowSound: true },
                 });
             }
+            noteId = await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Time's Up!",
+                    body: "Time's Up!",
+                },
+                trigger: endTime,
+            });
+            // }
         } else {
             await Notifications.cancelAllScheduledNotificationsAsync();
         }
