@@ -1,7 +1,6 @@
 // Core/First Party
-import React, { useCallback, useEffect, useRef } from "react";
-import { View, StyleSheet, Alert, AppState } from "react-native";
-import * as Notifications from "expo-notifications";
+import React from "react";
+import { View, StyleSheet, Alert } from "react-native";
 // Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
 // Additional Modules/Components
@@ -15,42 +14,13 @@ import * as ColorsConstant from "../../shared/constants/Colors";
 
 const TimerScreen = (props) => {
     const dispatch = useDispatch();
-    const stateSlice = useSelector((state) => state.tasks);
-    const appState = useRef(AppState.currentState);
-
-    const endTime = stateSlice.endTime;
-    const timerRunning = stateSlice.isRunning;
-
-    Notifications.setNotificationHandler({
-        handleNotification: async () => {
-            timerEndHandler();
-            return { shouldShowAlert: true };
-        },
-    });
-
-    useEffect(() => {
-        AppState.addEventListener("change", () => {
-            timerEndHandler();
-        });
-
-        return () => {
-            AppState.removeEventListener("change", () => {
-                timerEndHandler();
-            });
-        };
-    }, [endTime, timerRunning, stopHandler, timerEndHandler]);
-
-    const timerEndHandler = useCallback(() => {
-        if (endTime === null) return;
-        if (timerRunning && endTime <= new Date().getTime()) stopHandler(true);
-    }, [endTime, timerRunning, stopHandler]);
+    const tasksState = useSelector((state) => state.tasks);
 
     const resetTimerHandler = async () => {
-        await Notifications.cancelAllScheduledNotificationsAsync();
         dispatch(taskActions.reset());
     };
 
-    const stopHandler = (skipAlert = false) => {
+    const stopHandler = async (skipAlert = false) => {
         if (skipAlert) {
             dispatch(taskActions.stop());
             return;
@@ -76,24 +46,14 @@ const TimerScreen = (props) => {
     const playPauseHandler = async () => {
         const currTime = new Date().getTime();
         const offset =
-            (stateSlice.isBreak
-                ? stateSlice.breakLength
-                : stateSlice.focusLength) -
-            stateSlice.timeElapsed / 1000;
-        if (stateSlice.isRunning) {
-            await Notifications.cancelAllScheduledNotificationsAsync();
-            dispatch(taskActions.playPauseToggle());
+            (tasksState.isBreak
+                ? tasksState.breakLength
+                : tasksState.focusLength) -
+            tasksState.timeElapsed / 1000;
+        if (tasksState.isRunning) {
+            dispatch(taskActions.playPause());
         } else {
-            const noteId = await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Time's Up!",
-                    body: "Time's Up!",
-                },
-                trigger: currTime + offset * 1000,
-            });
-            dispatch(
-                taskActions.playPauseToggle(noteId, currTime + offset * 1000)
-            );
+            dispatch(taskActions.playPause(currTime + offset * 1000));
         }
     };
 
@@ -101,27 +61,30 @@ const TimerScreen = (props) => {
         <View style={styles.main}>
             <Timer
                 timerLength={
-                    stateSlice.isBreak
-                        ? stateSlice.breakLength
-                        : stateSlice.focusLength
+                    tasksState.isBreak
+                        ? tasksState.breakLength
+                        : tasksState.focusLength
                 }
-                timerKey={stateSlice.key}
+                timerKey={tasksState.key}
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                isRunning={stateSlice.isRunning}
+                isRunning={tasksState.isRunning}
                 color={
-                    stateSlice.isBreak
+                    tasksState.isBreak
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
-                title={stateSlice.isBreak ? "Break" : "Focus"}
+                title={tasksState.isBreak ? "Break" : "Focus"}
+                onComplete={() => {
+                    stopHandler(true);
+                }}
             />
             <ControlBar
                 playPauseHandler={playPauseHandler}
                 stopHandler={() => stopHandler()}
-                isRunning={stateSlice.isRunning}
+                isRunning={tasksState.isRunning}
                 color={
-                    stateSlice.isBreak
+                    tasksState.isBreak
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
