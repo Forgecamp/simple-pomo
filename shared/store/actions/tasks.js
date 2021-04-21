@@ -1,4 +1,5 @@
 import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
 export const PLAY_PAUSE_TOGGLE = "PLAY_PAUSE_TOGGLE";
 export const STOP = "STOP";
@@ -12,11 +13,13 @@ export const playPause = (endTime = null) => {
     return async (dispatch) => {
         let noteId = null;
         if (endTime) {
-            let permission = await Notifications.getPermissionsAsync();
-            if (permission.status === "undetermined") {
-                permission = await Notifications.requestPermissionsAsync({
-                    ios: { allowAlert: true, allowSound: true },
-                });
+            if (Platform.OS === "ios") {
+                let permission = await Notifications.getPermissionsAsync();
+                if (permission.status === "undetermined") {
+                    permission = await Notifications.requestPermissionsAsync({
+                        ios: { allowAlert: true, allowSound: true },
+                    });
+                }
             }
             noteId = await Notifications.scheduleNotificationAsync({
                 content: {
@@ -25,7 +28,6 @@ export const playPause = (endTime = null) => {
                 },
                 trigger: endTime,
             });
-            // }
         } else {
             await Notifications.cancelAllScheduledNotificationsAsync();
         }
