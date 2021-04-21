@@ -14,7 +14,7 @@ import * as ColorsConstant from "../../shared/constants/Colors";
 
 const TimerScreen = (props) => {
     const dispatch = useDispatch();
-    const stateSlice = useSelector((state) => state.tasks);
+    const tasksState = useSelector((state) => state.tasks);
 
     const resetTimerHandler = async () => {
         dispatch(taskActions.reset());
@@ -46,11 +46,11 @@ const TimerScreen = (props) => {
     const playPauseHandler = async () => {
         const currTime = new Date().getTime();
         const offset =
-            (stateSlice.isBreak
-                ? stateSlice.breakLength
-                : stateSlice.focusLength) -
-            stateSlice.timeElapsed / 1000;
-        if (stateSlice.isRunning) {
+            (tasksState.isBreak
+                ? tasksState.breakLength
+                : tasksState.focusLength) -
+            tasksState.timeElapsed / 1000;
+        if (tasksState.isRunning) {
             dispatch(taskActions.playPause());
         } else {
             dispatch(taskActions.playPause(currTime + offset * 1000));
@@ -61,20 +61,20 @@ const TimerScreen = (props) => {
         <View style={styles.main}>
             <Timer
                 timerLength={
-                    stateSlice.isBreak
-                        ? stateSlice.breakLength
-                        : stateSlice.focusLength
+                    tasksState.isBreak
+                        ? tasksState.breakLength
+                        : tasksState.focusLength
                 }
-                timerKey={stateSlice.key}
+                timerKey={tasksState.key}
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                isRunning={stateSlice.isRunning}
+                isRunning={tasksState.isRunning}
                 color={
-                    stateSlice.isBreak
+                    tasksState.isBreak
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
-                title={stateSlice.isBreak ? "Break" : "Focus"}
+                title={tasksState.isBreak ? "Break" : "Focus"}
                 onComplete={() => {
                     stopHandler(true);
                 }}
@@ -82,9 +82,9 @@ const TimerScreen = (props) => {
             <ControlBar
                 playPauseHandler={playPauseHandler}
                 stopHandler={() => stopHandler()}
-                isRunning={stateSlice.isRunning}
+                isRunning={tasksState.isRunning}
                 color={
-                    stateSlice.isBreak
+                    tasksState.isBreak
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
