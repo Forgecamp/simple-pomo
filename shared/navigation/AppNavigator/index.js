@@ -5,9 +5,7 @@ import { useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import TimerScreen, {
-    ScreenOptions as TimerScreenOptions,
-} from "../../../screens/TimerScreen";
+import TimerScreen, { TimerScreenOptions } from "../../../screens/TimerScreen";
 import AboutScreen, {
     ScreenOptions as AboutScreenOptions,
 } from "../../../screens/AboutScreen";
