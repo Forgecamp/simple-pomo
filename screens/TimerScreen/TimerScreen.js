@@ -8,23 +8,23 @@ import Timer from "./Timer";
 import TaskList from "./TaskList";
 import ControlBar from "./ControlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
-import * as taskActions from "../../shared/store/actions/tasks";
+import * as timerActions from "../../shared/store/actions/timer";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
 
 const TimerScreen = (props) => {
-    const [modalVisible, setModalVisible] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
     const dispatch = useDispatch();
-    const tasksState = useSelector((state) => state.tasks);
+    const timerState = useSelector((state) => state.timer);
 
     const resetTimerHandler = async () => {
-        dispatch(taskActions.reset());
+        dispatch(timerActions.reset());
     };
 
     const stopHandler = async (skipAlert = false) => {
         if (skipAlert) {
-            dispatch(taskActions.stop());
+            dispatch(timerActions.stop());
             return;
         }
 
@@ -35,7 +35,7 @@ const TimerScreen = (props) => {
                 {
                     text: "Yes",
                     onPress: () => {
-                        dispatch(taskActions.stop());
+                        dispatch(timerActions.stop());
                     },
                 },
                 {
@@ -48,14 +48,14 @@ const TimerScreen = (props) => {
     const playPauseHandler = async () => {
         const currTime = new Date().getTime();
         const offset =
-            (tasksState.isBreak
-                ? tasksState.breakLength
-                : tasksState.focusLength) -
-            tasksState.timeElapsed / 1000;
-        if (tasksState.isRunning) {
-            dispatch(taskActions.playPause());
+            (timerState.isBreak
+                ? timerState.breakLength
+                : timerState.focusLength) -
+            timerState.timeElapsed / 1000;
+        if (timerState.isRunning) {
+            dispatch(timerActions.playPause());
         } else {
-            dispatch(taskActions.playPause(currTime + offset * 1000));
+            dispatch(timerActions.playPause(currTime + offset * 1000));
         }
     };
 
@@ -63,20 +63,20 @@ const TimerScreen = (props) => {
         <View style={styles.main}>
             <Timer
                 timerLength={
-                    tasksState.isBreak
-                        ? tasksState.breakLength
-                        : tasksState.focusLength
+                    timerState.isBreak
+                        ? timerState.breakLength
+                        : timerState.focusLength
                 }
-                timerKey={tasksState.key}
+                timerKey={timerState.key}
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                isRunning={tasksState.isRunning}
+                isRunning={timerState.isRunning}
                 color={
-                    tasksState.isBreak
+                    timerState.isBreak
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
-                title={tasksState.isBreak ? "Break" : "Focus"}
+                title={timerState.isBreak ? "Break" : "Focus"}
                 onComplete={() => {
                     stopHandler(true);
                 }}
@@ -84,9 +84,9 @@ const TimerScreen = (props) => {
             <ControlBar
                 playPauseHandler={playPauseHandler}
                 stopHandler={() => stopHandler()}
-                isRunning={tasksState.isRunning}
+                isRunning={timerState.isRunning}
                 color={
-                    tasksState.isBreak
+                    timerState.isBreak
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
@@ -96,13 +96,21 @@ const TimerScreen = (props) => {
                 transparent={false}
                 visible={modalVisible}
             >
-                <Button
-                    title="Modal"
-                    onPress={() => {
-                        setModalVisible((prev) => !prev);
+                <View
+                    style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "100%",
                     }}
-                />
-                <TaskList />
+                >
+                    <Button
+                        title="Modal"
+                        onPress={() => {
+                            setModalVisible((prev) => !prev);
+                        }}
+                    />
+                    <TaskList />
+                </View>
             </Modal>
             <Button
                 title="Modal"

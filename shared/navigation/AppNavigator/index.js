@@ -20,7 +20,7 @@ const UserPrefsStackNavigator = createStackNavigator();
 const AppDrawerNavigator = createDrawerNavigator();
 
 const defaultScreenOptions = () => {
-    const isBreak = useSelector((state) => state.tasks.isBreak);
+    const isBreak = useSelector((state) => state.timer.isBreak);
     const color = isBreak ? ColorsConstants.Success : ColorsConstants.Notice;
     return {
         headerStyle: {

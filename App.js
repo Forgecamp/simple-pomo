@@ -3,7 +3,7 @@ import { AppNavigator } from "./shared/navigation/AppNavigator";
 import * as Notifications from "expo-notifications";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
-import tasksReducer from "./shared/store/reducers/tasks";
+import timerReducer from "./shared/store/reducers/timer";
 import ReduxThunk from "redux-thunk";
 
 Notifications.setNotificationHandler({
@@ -13,7 +13,7 @@ Notifications.setNotificationHandler({
 });
 
 const rootReducer = combineReducers({
-    tasks: tasksReducer,
+    timer: timerReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

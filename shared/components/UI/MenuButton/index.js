@@ -7,7 +7,7 @@ import HeaderButton from "../HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 const MenuButton = (navData) => {
-    const isBreak = useSelector((state) => state.tasks.isBreak);
+    const isBreak = useSelector((state) => state.timer.isBreak);
     const color = isBreak ? ColorsConstants.Success : ColorsConstants.Notice;
     return (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
