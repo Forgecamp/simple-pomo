@@ -26,6 +26,54 @@ export default function (state = initialState, action) {
             }
             return { ...state, tasks: updatedTasks };
         }
+        case EDIT_TASK: {
+            const updatedTasks = [...state.tasks];
+            const relevantIndex = updatedTasks.findIndex(
+                (task) => task.id === action.taskData.taskId
+            );
+            if (relevantIndex === -1) return state;
+            updatedTasks[relevantIndex].title = action.taskData.newTitle;
+            return {
+                ...state,
+                tasks: updatedTasks,
+            };
+        }
+        case REMOVE_TASK: {
+            let updatedTasks = [...state.tasks];
+            updatedTasks = updatedTasks.filter(
+                (task) => task.id !== action.taskId
+            );
+            return {
+                ...state,
+                tasks: updatedTasks,
+            };
+        }
+        case DECREMENT_TASK: {
+            const updatedTasks = [...state.tasks];
+            const relevantIndex = updatedTasks.findIndex(
+                (task) => task.id === action.taskData.taskId
+            );
+            if (relevantIndex === -1) return state;
+            updatedTasks[relevantIndex].count =
+                updatedTasks[relevantIndex].count - 1;
+            return {
+                ...state,
+                tasks: updatedTasks,
+            };
+        }
+        case INCREMENT_TASK: {
+            const updatedTasks = [...state.tasks];
+            const relevantIndex = updatedTasks.findIndex(
+                (task) => task.id === action.taskData.taskId
+            );
+            if (relevantIndex === -1) return state;
+            updatedTasks[relevantIndex].count =
+                updatedTasks[relevantIndex].count + 1;
+            return {
+                ...state,
+                tasks: updatedTasks,
+            };
+        }
         default: {
             return state;
         }

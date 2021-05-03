@@ -4,6 +4,7 @@ import * as Notifications from "expo-notifications";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import timerReducer from "./shared/store/reducers/timer";
+import tasksReducer from "./shared/store/reducers/tasks";
 import ReduxThunk from "redux-thunk";
 
 Notifications.setNotificationHandler({
@@ -14,6 +15,7 @@ Notifications.setNotificationHandler({
 
 const rootReducer = combineReducers({
     timer: timerReducer,
+    tasks: tasksReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
