@@ -17,6 +17,7 @@ const TimerScreen = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
     const dispatch = useDispatch();
     const timerState = useSelector((state) => state.timer);
+    const taskList = useSelector((state) => state.tasks.tasks);
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
@@ -24,7 +25,7 @@ const TimerScreen = (props) => {
 
     const stopHandler = async (skipAlert = false) => {
         if (skipAlert) {
-            dispatch(timerActions.stop());
+            dispatch(timerActions.stop(timerState.isBreak));
             return;
         }
 
@@ -35,7 +36,7 @@ const TimerScreen = (props) => {
                 {
                     text: "Yes",
                     onPress: () => {
-                        dispatch(timerActions.stop());
+                        dispatch(timerActions.stop(timerState.isBreak));
                     },
                 },
                 {
@@ -76,7 +77,13 @@ const TimerScreen = (props) => {
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
-                title={timerState.isBreak ? "Break" : "Focus"}
+                title={
+                    timerState.isBreak
+                        ? "Break"
+                        : taskList.length > 0
+                        ? taskList[0].title
+                        : "Focus"
+                }
                 onComplete={() => {
                     stopHandler(true);
                 }}
