@@ -19,10 +19,10 @@ export const removeTask = (taskId) => {
         taskId: taskId,
     };
 };
-export const completeTask = (taskId) => {
+export const completeTask = (isBreak) => {
     return {
         type: COMPLETE_TASK,
-        taskId: taskId,
+        isBreak: isBreak,
     };
 };
 export const editTask = (taskId, newTitle) => {

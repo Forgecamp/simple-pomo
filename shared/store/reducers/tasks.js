@@ -7,22 +7,27 @@ import {
     DECREMENT_TASK,
 } from "../actions/tasks";
 import Task from "../../models/task";
-
-const initialState = { tasks: [] };
+import dummyData from "../../dummyData";
+const initialState = { tasks: [...dummyData] };
 
 export default function (state = initialState, action) {
     switch (action.type) {
         case ADD_TASK: {
-            const newTask = new Task(action.taskData.title);
+            const newTask = new Task(
+                new Date().getTime(),
+                action.taskData.title
+            );
             return { ...state, tasks: state.tasks.concat(newTask) };
         }
         case COMPLETE_TASK: {
+            // console.log(state.tasks);
             if (state.tasks.length === 0) return state;
-            const updatedTasks = [...state.tasks];
+            if (action.isBreak) return state;
+            let updatedTasks = [...state.tasks];
             if (updatedTasks[0].count > 0) {
                 updatedTasks[0].count = updatedTasks[0].count - 1;
             } else {
-                updatedTasks.pop();
+                updatedTasks = updatedTasks.slice(1);
             }
             return { ...state, tasks: updatedTasks };
         }

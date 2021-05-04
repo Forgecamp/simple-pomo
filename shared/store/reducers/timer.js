@@ -17,13 +17,6 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        // case ADD_TASK: {
-        //     const task = new Task(
-        //         Date.toString().concat(`${Math.random}`),
-        //         action.taskData.title
-        //     );
-        //     return { ...state, tasks: state.tasks.concat(task) };
-        // }
         case STOP: {
             let updatedState = { ...state, isRunning: false };
             if (state.isBreak) {
