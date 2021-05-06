@@ -5,7 +5,7 @@ import { View, StyleSheet, Alert, Modal, Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 // Additional Modules/Components
 import Timer from "./Timer";
-import TaskList from "./TaskList";
+import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
 import * as timerActions from "../../shared/store/actions/timer";
@@ -18,6 +18,7 @@ const TimerScreen = (props) => {
     const dispatch = useDispatch();
     const timerState = useSelector((state) => state.timer);
     const taskList = useSelector((state) => state.tasks.tasks);
+    const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
@@ -60,6 +61,10 @@ const TimerScreen = (props) => {
         }
     };
 
+    const toggleModalHandler = () => {
+        setModalVisible((prev) => !prev);
+    };
+
     return (
         <View style={styles.main}>
             <Timer
@@ -77,13 +82,7 @@ const TimerScreen = (props) => {
                         ? ColorsConstant.Success
                         : ColorsConstant.Notice
                 }
-                title={
-                    timerState.isBreak
-                        ? "Break"
-                        : taskList.length > 0
-                        ? taskList[0].title
-                        : "Focus"
-                }
+                title={timerState.isBreak ? "Break" : currentTask}
                 onComplete={() => {
                     stopHandler(true);
                 }}
@@ -98,33 +97,14 @@ const TimerScreen = (props) => {
                         : ColorsConstant.Notice
                 }
             />
+            <Button title="Modal" onPress={toggleModalHandler} />
             <Modal
                 animationType="slide"
                 transparent={false}
                 visible={modalVisible}
             >
-                <View
-                    style={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: "100%",
-                    }}
-                >
-                    <Button
-                        title="Modal"
-                        onPress={() => {
-                            setModalVisible((prev) => !prev);
-                        }}
-                    />
-                    <TaskList />
-                </View>
+                <TaskModal tasks={taskList} modalHandler={toggleModalHandler} />
             </Modal>
-            <Button
-                title="Modal"
-                onPress={() => {
-                    setModalVisible((prev) => !prev);
-                }}
-            />
         </View>
     );
 };
