@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     StyleSheet,
     Text,
     TouchableOpacity,
-    Button,
     Platform,
+    TextInput,
+    Button,
 } from "react-native";
+import { useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import TaskList from "./TaskList";
-
+import TaskActions from "../../../shared/store/actions/tasks";
 const TaskModal = (props) => {
+    const dispatch = useDispatch();
+    const [formInput, setFormInput] = useState(null);
+    const submitHandler = () => {
+        dispatch(TaskActions.addTask(formInput));
+    };
     return (
         <View style={styles.modal}>
             <View style={styles.closeButton}>
@@ -27,6 +34,20 @@ const TaskModal = (props) => {
             <View style={styles.taskView}>
                 <TaskList tasks={props.tasks} />
             </View>
+            <View style={styles.taskForm}>
+                <TextInput
+                    style={styles.taskInput}
+                    onChangeText={(text) => setFormInput(text)}
+                />
+                <View style={styles.submitButtonContainer}>
+                    <Button
+                        title={"Submit"}
+                        onPress={() => {
+                            console.log("yo");
+                        }}
+                    />
+                </View>
+            </View>
         </View>
     );
 };
@@ -35,15 +56,19 @@ const styles = StyleSheet.create({
     closeButton: {
         position: "absolute",
         right: 2,
-        top: 2,
+        top: Platform.OS === "android" ? 2 : 40,
     },
     modal: {
         height: "100%",
         // justifyContent: "center",
-        paddingVertical: 30,
+        paddingVertical: Platform.OS === "android" ? 30 : 70,
         paddingHorizontal: 25,
     },
     taskView: {},
+    taskInput: {
+        borderWidth: 1,
+        borderColor: "black",
+    },
 });
 
 export default TaskModal;
