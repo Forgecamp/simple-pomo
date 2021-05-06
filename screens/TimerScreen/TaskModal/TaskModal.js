@@ -11,12 +11,13 @@ import {
 import { useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import TaskList from "./TaskList";
-import TaskActions from "../../../shared/store/actions/tasks";
+import * as taskActions from "../../../shared/store/actions/tasks";
 const TaskModal = (props) => {
     const dispatch = useDispatch();
     const [formInput, setFormInput] = useState(null);
     const submitHandler = () => {
-        dispatch(TaskActions.addTask(formInput));
+        dispatch(taskActions.addTask(formInput));
+        setFormInput(() => null);
     };
     return (
         <View style={styles.modal}>
@@ -38,14 +39,12 @@ const TaskModal = (props) => {
                 <TextInput
                     style={styles.taskInput}
                     onChangeText={(text) => setFormInput(text)}
+                    maxLength={20}
+                    placeholder={"Add New Task"}
+                    value={formInput}
                 />
                 <View style={styles.submitButtonContainer}>
-                    <Button
-                        title={"Submit"}
-                        onPress={() => {
-                            console.log("yo");
-                        }}
-                    />
+                    <Button title={"Submit"} onPress={submitHandler} />
                 </View>
             </View>
         </View>
@@ -60,14 +59,17 @@ const styles = StyleSheet.create({
     },
     modal: {
         height: "100%",
-        // justifyContent: "center",
-        paddingVertical: Platform.OS === "android" ? 30 : 70,
+        paddingVertical: Platform.OS === "android" ? 40 : 70,
         paddingHorizontal: 25,
+        justifyContent: "space-between",
+        flex: 1,
     },
-    taskView: {},
+    taskForm: {},
     taskInput: {
-        borderWidth: 1,
-        borderColor: "black",
+        borderBottomColor: "gray",
+        borderBottomWidth: 1,
+        marginVertical: 10,
+        padding: 5,
     },
 });
 

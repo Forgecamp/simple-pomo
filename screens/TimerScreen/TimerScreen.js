@@ -1,6 +1,15 @@
 // Core/First Party
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, Modal, Button } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Alert,
+    Modal,
+    TouchableOpacity,
+    Text,
+    Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
 // Additional Modules/Components
@@ -8,6 +17,7 @@ import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
+import TaskItem from "../../shared/components/UI/TaskItem";
 import * as timerActions from "../../shared/store/actions/timer";
 // Constants
 import ExpoConstants from "expo-constants";
@@ -97,7 +107,30 @@ const TimerScreen = (props) => {
                         : ColorsConstant.Notice
                 }
             />
-            <Button title="Modal" onPress={toggleModalHandler} />
+            <View style={styles.modalOpener}>
+                {taskList.length > 0 && (
+                    <TouchableOpacity onPress={toggleModalHandler}>
+                        <TaskItem item={taskList[0]} />
+                    </TouchableOpacity>
+                )}
+                {taskList.length === 0 && (
+                    <TouchableOpacity onPress={toggleModalHandler}>
+                        <Ionicons
+                            name={
+                                Platform.OS === "ios"
+                                    ? "ios-add-circle"
+                                    : "md-add-circle"
+                            }
+                            size={35}
+                            color={
+                                timerState.isBreak
+                                    ? ColorsConstant.Success
+                                    : ColorsConstant.Notice
+                            }
+                        />
+                    </TouchableOpacity>
+                )}
+            </View>
             <Modal
                 animationType="slide"
                 transparent={false}
@@ -119,10 +152,16 @@ export const ScreenOptions = (navData) => {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        justifyContent: "flex-start",
+        justifyContent: "space-around",
         alignItems: "center",
         marginTop: 3 * ExpoConstants.statusBarHeight,
         backgroundColor: "#ecf0f1",
+        height: "100%",
+    },
+    modalOpener: {
+        height: 35,
+        alignItems: "center",
+        justifyContent: "center",
     },
 });
 

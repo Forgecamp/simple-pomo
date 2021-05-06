@@ -1,5 +1,6 @@
 import React from "react";
 import { View, FlatList, Text, StyleSheet } from "react-native";
+import TaskItem from "../../../../shared/components/UI/TaskItem";
 
 const TaskList = (props) => {
     return (
@@ -8,7 +9,7 @@ const TaskList = (props) => {
                 data={props.tasks}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={(item) => {
-                    return <Text>{item.item.title}</Text>;
+                    return <TaskItem item={item.item} />;
                 }}
             />
         </View>

@@ -56,7 +56,7 @@ export default function (state = initialState, action) {
         case DECREMENT_TASK: {
             const updatedTasks = [...state.tasks];
             const relevantIndex = updatedTasks.findIndex(
-                (task) => task.id === action.taskData.taskId
+                (task) => task.id === action.taskId
             );
             if (relevantIndex === -1) return state;
             updatedTasks[relevantIndex].count =
@@ -69,7 +69,7 @@ export default function (state = initialState, action) {
         case INCREMENT_TASK: {
             const updatedTasks = [...state.tasks];
             const relevantIndex = updatedTasks.findIndex(
-                (task) => task.id === action.taskData.taskId
+                (task) => task.id === action.taskId
             );
             if (relevantIndex === -1) return state;
             updatedTasks[relevantIndex].count =
