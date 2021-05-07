@@ -1,60 +1,10 @@
-import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
-
-export const PLAY_PAUSE_TOGGLE = "PLAY_PAUSE_TOGGLE";
-export const STOP = "STOP";
-export const RESET = "RESET";
 export const ADD_TASK = "ADD_TASK";
 export const REMOVE_TASK = "REMOVE_TASK";
 export const COMPLETE_TASK = "COMPLETE_TASK";
 export const EDIT_TASK = "EDIT_TASK";
+export const INCREMENT_TASK = "INCREMENT_TASK";
+export const DECREMENT_TASK = "DECREMENT_TASK";
 
-export const playPause = (endTime = null) => {
-    return async (dispatch) => {
-        let noteId = null;
-        if (endTime) {
-            if (Platform.OS === "ios") {
-                let permission = await Notifications.getPermissionsAsync();
-                if (permission.status === "undetermined") {
-                    permission = await Notifications.requestPermissionsAsync({
-                        ios: { allowAlert: true, allowSound: true },
-                    });
-                }
-            }
-            noteId = await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Time's Up!",
-                    body: "Time's Up!",
-                },
-                trigger: endTime,
-            });
-        } else {
-            await Notifications.cancelAllScheduledNotificationsAsync();
-        }
-        dispatch({
-            type: PLAY_PAUSE_TOGGLE,
-            noteId: noteId,
-            endTime: endTime,
-        });
-    };
-};
-
-export const stop = () => {
-    return async (dispatch) => {
-        await Notifications.cancelAllScheduledNotificationsAsync();
-        dispatch({
-            type: STOP,
-        });
-    };
-};
-export const reset = () => {
-    return async (dispatch) => {
-        await Notifications.cancelAllScheduledNotificationsAsync();
-        dispatch({
-            type: RESET,
-        });
-    };
-};
 export const addTask = (title) => {
     return {
         type: ADD_TASK,
@@ -63,14 +13,16 @@ export const addTask = (title) => {
         },
     };
 };
-export const removeTask = () => {
+export const removeTask = (taskId) => {
     return {
         type: REMOVE_TASK,
+        taskId: taskId,
     };
 };
-export const completeTask = () => {
+export const completeTask = (isBreak) => {
     return {
         type: COMPLETE_TASK,
+        isBreak: isBreak,
     };
 };
 export const editTask = (taskId, newTitle) => {
@@ -80,5 +32,17 @@ export const editTask = (taskId, newTitle) => {
             taskId: taskId,
             newTitle: newTitle,
         },
+    };
+};
+export const incrementTask = (taskId) => {
+    return {
+        type: INCREMENT_TASK,
+        taskId: taskId,
+    };
+};
+export const decrementTask = (taskId) => {
+    return {
+        type: DECREMENT_TASK,
+        taskId: taskId,
     };
 };
