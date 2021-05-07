@@ -77,6 +77,7 @@ export const AppNavigator = () => {
                 <AppDrawerNavigator.Screen
                     component={TimerNavigator}
                     name="Simple Pomo"
+                    itemStyle={{ color: "red" }}
                 />
                 <AppDrawerNavigator.Screen
                     component={UserPrefsNavigator}

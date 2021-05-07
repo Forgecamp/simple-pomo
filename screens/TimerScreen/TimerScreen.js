@@ -17,7 +17,7 @@ import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
-import TaskItem from "../../shared/components/UI/TaskItem";
+import TaskItem from "./TaskModal/TaskList/TaskItem";
 import * as timerActions from "../../shared/store/actions/timer";
 // Constants
 import ExpoConstants from "expo-constants";
@@ -108,28 +108,21 @@ const TimerScreen = (props) => {
                 }
             />
             <View style={styles.modalOpener}>
-                {taskList.length > 0 && (
-                    <TouchableOpacity onPress={toggleModalHandler}>
-                        <TaskItem item={taskList[0]} />
-                    </TouchableOpacity>
-                )}
-                {taskList.length === 0 && (
-                    <TouchableOpacity onPress={toggleModalHandler}>
-                        <Ionicons
-                            name={
-                                Platform.OS === "ios"
-                                    ? "ios-add-circle"
-                                    : "md-add-circle"
-                            }
-                            size={35}
-                            color={
-                                timerState.isBreak
-                                    ? ColorsConstant.Success
-                                    : ColorsConstant.Notice
-                            }
-                        />
-                    </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={toggleModalHandler}>
+                    <Ionicons
+                        name={
+                            Platform.OS === "ios"
+                                ? "ios-add-circle"
+                                : "md-add-circle"
+                        }
+                        size={35}
+                        color={
+                            timerState.isBreak
+                                ? ColorsConstant.Success
+                                : ColorsConstant.Notice
+                        }
+                    />
+                </TouchableOpacity>
             </View>
             <Modal
                 animationType="slide"
@@ -154,8 +147,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "space-around",
         alignItems: "center",
-        marginTop: 3 * ExpoConstants.statusBarHeight,
-        backgroundColor: "#ecf0f1",
+        paddingTop: 3 * ExpoConstants.statusBarHeight,
         height: "100%",
     },
     modalOpener: {

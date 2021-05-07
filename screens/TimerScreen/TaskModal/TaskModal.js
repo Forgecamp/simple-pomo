@@ -8,11 +8,14 @@ import {
     TextInput,
     Button,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import TaskList from "./TaskList";
 import * as taskActions from "../../../shared/store/actions/tasks";
+import * as Colors from "../../../shared/constants/Colors";
+
 const TaskModal = (props) => {
+    const isBreak = useSelector((state) => state.timer.isBreak);
     const dispatch = useDispatch();
     const [formInput, setFormInput] = useState(null);
     const submitHandler = () => {
@@ -33,6 +36,9 @@ const TaskModal = (props) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.taskView}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Tasks</Text>
+                </View>
                 <TaskList tasks={props.tasks} />
             </View>
             <View style={styles.taskForm}>
@@ -44,7 +50,11 @@ const TaskModal = (props) => {
                     value={formInput}
                 />
                 <View style={styles.submitButtonContainer}>
-                    <Button title={"Submit"} onPress={submitHandler} />
+                    <Button
+                        title={"Save"}
+                        onPress={submitHandler}
+                        color={isBreak ? Colors.Success : Colors.Notice}
+                    />
                 </View>
             </View>
         </View>
@@ -59,12 +69,18 @@ const styles = StyleSheet.create({
     },
     modal: {
         height: "100%",
-        paddingVertical: Platform.OS === "android" ? 40 : 70,
+        paddingVertical: Platform.OS === "android" ? 10 : 40,
         paddingHorizontal: 25,
         justifyContent: "space-between",
         flex: 1,
     },
-    taskForm: {},
+    header: {
+        alignItems: "center",
+    },
+    headerText: {
+        fontWeight: "bold",
+        fontSize: 22,
+    },
     taskInput: {
         borderBottomColor: "gray",
         borderBottomWidth: 1,

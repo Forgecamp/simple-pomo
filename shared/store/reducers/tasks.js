@@ -20,7 +20,6 @@ export default function (state = initialState, action) {
             return { ...state, tasks: state.tasks.concat(newTask) };
         }
         case COMPLETE_TASK: {
-            // console.log(state.tasks);
             if (state.tasks.length === 0) return state;
             if (action.isBreak) return state;
             let updatedTasks = [...state.tasks];

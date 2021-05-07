@@ -1,6 +1,6 @@
 import React from "react";
 import { View, FlatList, Text, StyleSheet } from "react-native";
-import TaskItem from "../../../../shared/components/UI/TaskItem";
+import TaskItem from "./TaskItem";
 
 const TaskList = (props) => {
     return (

@@ -1,10 +1,10 @@
 import { STOP, PLAY_PAUSE_TOGGLE, RESET } from "../actions/timer";
 
 const initialState = {
-    focusLength: 20,
-    shortBreakLength: 10,
-    longBreakLength: 15,
-    breakLength: 10,
+    focusLength: 1500,
+    shortBreakLength: 300,
+    longBreakLength: 900,
+    breakLength: 300,
     timeElapsed: 0,
     startTime: null,
     endTime: null,
