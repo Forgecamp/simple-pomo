@@ -23,10 +23,10 @@ const TaskItem = (props) => {
             dispatch(timerActions.reset());
     };
     const plusButtonHandler = () => {
-        dispatch(taskActions.incrementTask(props.item.id));
+        dispatch(taskActions.incrementTask(props.item.id, props.item.count));
     };
     const minusButtonHandler = () => {
-        dispatch(taskActions.decrementTask(props.item.id));
+        dispatch(taskActions.decrementTask(props.item.id, props.item.count));
     };
     return (
         <View style={styles.screen}>

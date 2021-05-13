@@ -45,16 +45,24 @@ export const editTask = (taskId, newTitle) => {
         },
     };
 };
-export const incrementTask = (taskId) => {
-    return {
-        type: INCREMENT_TASK,
-        taskId: taskId,
+
+export const incrementTask = (taskId, currentCount) => {
+    return async (dispatch) => {
+        db.incrementTask(taskId, currentCount);
+        dispatch({
+            type: INCREMENT_TASK,
+            taskId: taskId,
+        });
     };
 };
-export const decrementTask = (taskId) => {
-    return {
-        type: DECREMENT_TASK,
-        taskId: taskId,
+
+export const decrementTask = (taskId, currentCount) => {
+    return async (dispatch) => {
+        db.decrementTask(taskId, currentCount);
+        dispatch({
+            type: DECREMENT_TASK,
+            taskId: taskId,
+        });
     };
 };
 

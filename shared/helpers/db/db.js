@@ -104,5 +104,52 @@ export const removeTask = (id) => {
             );
         });
     });
+
+    return promise;
+};
+
+export const incrementTask = (id, currentCount) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    UPDATE tasks
+                    SET count = ?
+                    WHERE id = ?;
+                `,
+                [currentCount + 1, id],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+
+    return promise;
+};
+
+export const decrementTask = (id, currentCount) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    UPDATE tasks
+                    SET count = ?
+                    WHERE id = ?;
+                `,
+                [currentCount - 1, id],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+
     return promise;
 };

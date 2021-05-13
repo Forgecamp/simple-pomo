@@ -1,1 +1,8 @@
-export { init, fetchTasks, addTask, removeTask } from "./db";
+export {
+    init,
+    fetchTasks,
+    addTask,
+    removeTask,
+    incrementTask,
+    decrementTask,
+} from "./db";
