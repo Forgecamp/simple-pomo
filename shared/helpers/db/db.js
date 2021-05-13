@@ -153,3 +153,26 @@ export const decrementTask = (id, currentCount) => {
 
     return promise;
 };
+
+export const updateTask = (id, newTitle) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    UPDATE tasks
+                    SET title = ?
+                    WHERE id = ?;
+                `,
+                [newTitle, id],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+
+    return promise;
+};

@@ -29,6 +29,8 @@ const TimerScreen = (props) => {
     const timerState = useSelector((state) => state.timer);
     const taskList = useSelector((state) => state.tasks.tasks);
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
+    const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
+    const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
 
     useEffect(() => {
         // The code that triggers loading existing tasks from internal DB/cloud
@@ -41,7 +43,13 @@ const TimerScreen = (props) => {
 
     const stopHandler = async (skipAlert = false) => {
         if (skipAlert) {
-            dispatch(timerActions.stop(timerState.isBreak));
+            dispatch(
+                timerActions.stop(
+                    timerState.isBreak,
+                    currentTaskId,
+                    currentTaskCount
+                )
+            );
             return;
         }
 
@@ -52,7 +60,13 @@ const TimerScreen = (props) => {
                 {
                     text: "Yes",
                     onPress: () => {
-                        dispatch(timerActions.stop(timerState.isBreak));
+                        dispatch(
+                            timerActions.stop(
+                                timerState.isBreak,
+                                currentTaskId,
+                                currentTaskCount
+                            )
+                        );
                     },
                 },
                 {

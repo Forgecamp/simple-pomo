@@ -30,19 +30,29 @@ export const removeTask = (taskId) => {
         });
     };
 };
-export const completeTask = (isBreak) => {
-    return {
-        type: COMPLETE_TASK,
-        isBreak: isBreak,
+export const completeTask = (isBreak, taskId, currentCount) => {
+    return async (dispatch) => {
+        currentCount > 0
+            ? db.decrementTask(taskId, currentCount)
+            : db.removeTask(taskId, currentCount);
+        dispatch({
+            type: COMPLETE_TASK,
+            isBreak: isBreak,
+            currentCount: currentCount,
+        });
     };
 };
+
 export const editTask = (taskId, newTitle) => {
-    return {
-        type: EDIT_TASK,
-        taskData: {
-            taskId: taskId,
-            newTitle: newTitle,
-        },
+    return async (dispatch) => {
+        db.editTask(taskId, newTitle);
+        dispatch({
+            type: EDIT_TASK,
+            taskData: {
+                taskId: taskId,
+                newTitle: newTitle,
+            },
+        });
     };
 };
 

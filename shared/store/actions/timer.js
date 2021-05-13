@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-import { COMPLETE_TASK } from "./tasks";
+import * as taskActions from "./tasks";
 
 export const PLAY_PAUSE_TOGGLE = "PLAY_PAUSE_TOGGLE";
 export const STOP = "STOP";
@@ -36,16 +36,13 @@ export const playPause = (endTime = null) => {
     };
 };
 
-export const stop = (isBreak) => {
+export const stop = (taskId, isBreak, currentCount) => {
     return async (dispatch) => {
         await Notifications.cancelAllScheduledNotificationsAsync();
         dispatch({
             type: STOP,
         });
-        dispatch({
-            type: COMPLETE_TASK,
-            isBreak: isBreak,
-        });
+        dispatch(taskActions.completeTask(taskId, isBreak, currentCount));
     };
 };
 export const reset = () => {
