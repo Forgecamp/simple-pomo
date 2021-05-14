@@ -5,4 +5,5 @@ export {
     removeTask,
     incrementTask,
     decrementTask,
+    updateTask,
 } from "./db";

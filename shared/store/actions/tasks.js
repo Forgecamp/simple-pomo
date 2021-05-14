@@ -43,9 +43,9 @@ export const completeTask = (isBreak, taskId, currentCount) => {
     };
 };
 
-export const editTask = (taskId, newTitle) => {
+export const updateTask = (taskId, newTitle) => {
     return async (dispatch) => {
-        db.editTask(taskId, newTitle);
+        db.updateTask(taskId, newTitle);
         dispatch({
             type: EDIT_TASK,
             taskData: {
