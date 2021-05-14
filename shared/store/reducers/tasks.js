@@ -5,18 +5,16 @@ import {
     REMOVE_TASK,
     INCREMENT_TASK,
     DECREMENT_TASK,
+    SET_TASKS,
 } from "../actions/tasks";
 import Task from "../../models/task";
-import dummyData from "../../dummyData";
-const initialState = { tasks: [...dummyData] };
+// import dummyData from "../../dummyData";
+const initialState = { tasks: [] };
 
 export default function (state = initialState, action) {
     switch (action.type) {
         case ADD_TASK: {
-            const newTask = new Task(
-                new Date().getTime(),
-                action.taskData.title
-            );
+            const newTask = new Task(action.taskData.id, action.taskData.title);
             return { ...state, tasks: state.tasks.concat(newTask) };
         }
         case COMPLETE_TASK: {
@@ -77,6 +75,9 @@ export default function (state = initialState, action) {
                 ...state,
                 tasks: updatedTasks,
             };
+        }
+        case SET_TASKS: {
+            return { ...state, tasks: [...action.tasks] };
         }
         default: {
             return state;

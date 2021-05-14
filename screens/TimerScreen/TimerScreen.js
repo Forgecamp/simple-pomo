@@ -1,5 +1,5 @@
 // Core/First Party
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
@@ -17,8 +17,8 @@ import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
 import MenuButton from "../../shared/components/UI/MenuButton";
-import TaskItem from "./TaskModal/TaskList/TaskItem";
 import * as timerActions from "../../shared/store/actions/timer";
+import * as taskActions from "../../shared/store/actions/tasks";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
@@ -29,6 +29,13 @@ const TimerScreen = (props) => {
     const timerState = useSelector((state) => state.timer);
     const taskList = useSelector((state) => state.tasks.tasks);
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
+    const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
+    const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
+
+    useEffect(() => {
+        // The code that triggers loading existing tasks from internal DB/cloud
+        dispatch(taskActions.loadTasks());
+    }, []);
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
@@ -36,7 +43,13 @@ const TimerScreen = (props) => {
 
     const stopHandler = async (skipAlert = false) => {
         if (skipAlert) {
-            dispatch(timerActions.stop(timerState.isBreak));
+            dispatch(
+                timerActions.stop(
+                    timerState.isBreak,
+                    currentTaskId,
+                    currentTaskCount
+                )
+            );
             return;
         }
 
@@ -47,7 +60,13 @@ const TimerScreen = (props) => {
                 {
                     text: "Yes",
                     onPress: () => {
-                        dispatch(timerActions.stop(timerState.isBreak));
+                        dispatch(
+                            timerActions.stop(
+                                timerState.isBreak,
+                                currentTaskId,
+                                currentTaskCount
+                            )
+                        );
                     },
                 },
                 {
