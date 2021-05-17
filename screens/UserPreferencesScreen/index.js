@@ -1,1 +1,1 @@
-export { default } from "./UserPreferencesScreen";
+export { default, ScreenOptions } from "./UserPreferencesScreen";

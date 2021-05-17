@@ -157,7 +157,6 @@ const TimerScreen = (props) => {
 export const ScreenOptions = (navData) => {
     return {
         headerTitle: "Simple Pomo",
-        headerLeft: () => MenuButton(navData),
     };
 };
 

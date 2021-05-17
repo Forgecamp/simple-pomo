@@ -13,13 +13,14 @@ import UserPreferencesScreen, {
     ScreenOptions as PrefsScreenOptions,
 } from "../../../screens/UserPreferencesScreen";
 import * as ColorsConstants from "../../constants/Colors";
+import MenuButton from "../../components/UI/MenuButton";
 
 const TimerStackNavigator = createStackNavigator();
 const AboutStackNavigator = createStackNavigator();
 const UserPrefsStackNavigator = createStackNavigator();
 const AppDrawerNavigator = createDrawerNavigator();
 
-const defaultScreenOptions = () => {
+const defaultScreenOptions = (navData) => {
     const isBreak = useSelector((state) => state.timer.isBreak);
     const color = isBreak ? ColorsConstants.Success : ColorsConstants.Notice;
     return {
@@ -27,6 +28,7 @@ const defaultScreenOptions = () => {
             backgroundColor: Platform.OS === "android" ? color : "white",
         },
         headerTintColor: Platform.OS === "android" ? "white" : color,
+        headerLeft: () => MenuButton(navData),
     };
 };
 

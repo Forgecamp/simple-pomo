@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
 export const ScreenOptions = (navData) => {
     return {
         headerTitle: "Preferences",
-        headerLeft: () => MenuButton(navData),
         headerRight: function SaveButton(navData) {
             return (
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
