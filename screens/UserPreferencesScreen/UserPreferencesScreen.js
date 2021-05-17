@@ -26,7 +26,15 @@ const UserPreferencesScreen = () => {
                     <Text style={styles.subHeader}>Lorem ipsum</Text>
                 </View>
                 <View style={styles.section}>
-                    <Text style={styles.header}>Break Period Length: </Text>
+                    <Text style={styles.header}>
+                        Short Break Period Length:{" "}
+                    </Text>
+                    <Text style={styles.subHeader}>Lorem ipsum</Text>
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.header}>
+                        Long Break Period Length:{" "}
+                    </Text>
                     <Text style={styles.subHeader}>Lorem ipsum</Text>
                 </View>
                 <View style={styles.section}>
