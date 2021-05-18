@@ -28,9 +28,136 @@ export const init = () => {
             tx.executeSql(
                 `
                     CREATE TABLE IF NOT EXISTS options (
-                        oid INTEGER PRIMARY KEY AUTOINCREMENT,
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL UNIQUE,
                         value INTEGER NOT NULL
                     );
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("defaultShortBreak", 300);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("defaultFocus", 1500);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("defaultLongBreak", 900);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("focusLength", 1500);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("shortBreakLength", 300);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("longBreakLength", 900);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("autoContinue", 0);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("cloudStorage", 0);
+                `,
+                [],
+                () => {
+                    resolve();
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+        db.transaction((tx) => {
+            tx.executeSql(
+                `   
+                    INSERT INTO options (name, value) VALUES ("useSound", 1);
                 `,
                 [],
                 () => {
@@ -174,5 +301,48 @@ export const updateTask = (id, newTitle) => {
         });
     });
 
+    return promise;
+};
+
+export const updateOption = (id, newValue) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    UPDATE options
+                    SET value = ?
+                    WHERE id = ?;
+                `,
+                [newValue, id],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+
+    return promise;
+};
+
+export const fetchOptions = () => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    SELECT * FROM options
+                `,
+                [],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
     return promise;
 };

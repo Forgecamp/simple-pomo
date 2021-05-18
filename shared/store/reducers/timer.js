@@ -1,4 +1,9 @@
 import { STOP, PLAY_PAUSE_TOGGLE, RESET } from "../actions/timer";
+import {
+    SET_FOCUS,
+    SET_LONG_BREAK,
+    SET_SHORT_BREAK,
+} from "../actions/preferences";
 
 const initialState = {
     focusLength: 1500,
@@ -68,6 +73,23 @@ export default function (state = initialState, action) {
                 ...state,
                 ...updatedState,
             };
+        }
+        case SET_SHORT_BREAK: {
+            return {
+                ...state,
+                shortBreakLength: action.length,
+                key: state.key + 1,
+            };
+        }
+        case SET_LONG_BREAK: {
+            return {
+                ...state,
+                longBreakLength: action.length,
+                key: state.key + 1,
+            };
+        }
+        case SET_FOCUS: {
+            return { ...state, focusLength: action.length, key: state.key + 1 };
         }
     }
 
