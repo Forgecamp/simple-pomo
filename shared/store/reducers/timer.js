@@ -1,5 +1,6 @@
 import { STOP, PLAY_PAUSE_TOGGLE, RESET } from "../actions/timer";
 import {
+    APPLY_PREFERENCES,
     SET_FOCUS,
     SET_LONG_BREAK,
     SET_SHORT_BREAK,
@@ -90,6 +91,15 @@ export default function (state = initialState, action) {
         }
         case SET_FOCUS: {
             return { ...state, focusLength: action.length, key: state.key + 1 };
+        }
+        case APPLY_PREFERENCES: {
+            return {
+                ...state,
+                key: state.key + 1,
+                focusLength: action.options.defaultFocus,
+                shortBreakLength: action.options.defaultShortBreak,
+                longBreakLength: action.options.defaultLongBreak,
+            };
         }
     }
 

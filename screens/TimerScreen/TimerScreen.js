@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Text,
     Platform,
+    ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
@@ -16,9 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
-import MenuButton from "../../shared/components/UI/MenuButton";
 import * as timerActions from "../../shared/store/actions/timer";
 import * as taskActions from "../../shared/store/actions/tasks";
+import * as preferencesActions from "../../shared/store/actions/preferences";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
@@ -31,11 +32,17 @@ const TimerScreen = (props) => {
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
+    const loading = useSelector((state) => state.preferences.loading);
+
+    // console.log(timerState);
 
     useEffect(() => {
         // The code that triggers loading existing tasks from internal DB/cloud
-        dispatch(taskActions.loadTasks());
-    }, []);
+        if (loading) {
+            dispatch(taskActions.loadTasks());
+            dispatch(preferencesActions.loadPreferences());
+        }
+    }, [loading]);
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
@@ -94,7 +101,11 @@ const TimerScreen = (props) => {
         setModalVisible((prev) => !prev);
     };
 
-    return (
+    return loading ? (
+        <View style={styles.loadingScreen}>
+            <ActivityIndicator size="large" color={ColorsConstant.Notice} />
+        </View>
+    ) : (
         <View style={styles.main}>
             <Timer
                 timerLength={
@@ -161,6 +172,13 @@ export const ScreenOptions = (navData) => {
 };
 
 const styles = StyleSheet.create({
+    loadingScreen: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
+    },
     main: {
         flex: 1,
         justifyContent: "space-around",

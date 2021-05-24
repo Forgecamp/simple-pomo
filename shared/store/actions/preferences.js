@@ -1,45 +1,39 @@
-export const SET_FOCUS = "SET_FOCUS";
-export const SET_SHORT_BREAK = "SET_SHORT_BREAK";
-export const SET_LONG_BREAK = "SET_LONG_BREAK";
-export const TOGGLE_AUTO_CONTINE = "TOGGLE_AUTO_CONTINUE";
-export const TOGGLE_SOUND = "TOGGLE_SOUND";
-export const TOGGLE_CLOUD = "TOGGLE_CLOUD";
+export const APPLY_PREFERENCES = "APPLY_PREFERENCES";
+export const SET_HAS_LOADED = "SET_HAS_LOADED";
 
-export const setFocus = (length) => {
-    return {
-        type: SET_FOCUS,
-        length: length,
+import * as db from "../../helpers/db";
+
+export const loadPreferences = () => {
+    return async (dispatch) => {
+        const dbResult = await db.fetchOptions();
+        const parsedResults = await dbResult.rows["_array"];
+        const options = {};
+
+        for (const option of parsedResults) {
+            options[option.name] = option.value;
+        }
+
+        dispatch({
+            type: APPLY_PREFERENCES,
+            options: options,
+        });
+
+        dispatch({ type: SET_HAS_LOADED });
     };
 };
 
-export const setShortBreak = (length) => {
-    return {
-        type: SET_SHORT_BREAK,
-        length: length,
-    };
-};
+export const savePreferences = (options) => {
+    return async (dispatch) => {
+        const parsedOptions = {};
+        for (const option of options) {
+            await db.updateOption(option.name, option.value);
+            parsedOptions[option.name] = option.value;
+            // console.log(option);
+        }
 
-export const setLongBreak = (length) => {
-    return {
-        type: SET_LONG_BREAK,
-        length: length,
-    };
-};
-
-export const toggleAutoContinue = () => {
-    return {
-        type: TOGGLE_AUTO_CONTINE,
-    };
-};
-
-export const toggleSound = () => {
-    return {
-        type: TOGGLE_SOUND,
-    };
-};
-
-export const toggleCloud = () => {
-    return {
-        type: TOGGLE_CLOUD,
+        dispatch({
+            type: APPLY_PREFERENCES,
+            options: parsedOptions,
+        });
     };
 };

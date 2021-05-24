@@ -304,16 +304,16 @@ export const updateTask = (id, newTitle) => {
     return promise;
 };
 
-export const updateOption = (id, newValue) => {
+export const updateOption = (name, newValue) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
                 `
                     UPDATE options
                     SET value = ?
-                    WHERE id = ?;
+                    WHERE name = ?;
                 `,
-                [newValue, id],
+                [newValue, name],
                 (_, result) => {
                     resolve(result);
                 },

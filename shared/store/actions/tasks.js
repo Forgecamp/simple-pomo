@@ -12,6 +12,7 @@ import * as db from "../../helpers/db";
 export const addTask = (title) => {
     return async (dispatch) => {
         const res = await db.addTask(title, 0);
+
         dispatch({
             type: ADD_TASK,
             taskData: {

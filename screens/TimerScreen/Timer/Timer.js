@@ -15,6 +15,7 @@ import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 // Constants
 
 const Timer = (props) => {
+    console.log(props.timerLength);
     return (
         <View style={styles.timerFace}>
             <CountdownCircleTimer
