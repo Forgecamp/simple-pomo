@@ -5,11 +5,13 @@ import {
     SET_LONG_BREAK,
     SET_SHORT_BREAK,
 } from "../actions/preferences";
+import { ActionSheetIOS } from "react-native";
 
 const initialState = {
     focusLength: 1500,
     shortBreakLength: 300,
     longBreakLength: 900,
+    isLongBreak: false,
     breakLength: 300,
     timeElapsed: 0,
     startTime: null,
@@ -29,8 +31,10 @@ export default function (state = initialState, action) {
                 let breaks = updatedState.completedBreaks;
                 if (breaks >= 2) {
                     updatedState.breakLength = updatedState.longBreakLength;
+                    updatedState.currentBreak = "long";
                 } else {
                     updatedState.breakLength = updatedState.shortBreakLength;
+                    updatedState.currentBreak = "short";
                 }
                 if (breaks >= 2) breaks = -2;
                 updatedState.completedBreaks = breaks + 1;
@@ -99,6 +103,9 @@ export default function (state = initialState, action) {
                 focusLength: action.options.defaultFocus,
                 shortBreakLength: action.options.defaultShortBreak,
                 longBreakLength: action.options.defaultLongBreak,
+                breakLength: state.isLongBreak
+                    ? action.options.defaultLongBreak
+                    : action.options.defaultShortBreak,
             };
         }
     }

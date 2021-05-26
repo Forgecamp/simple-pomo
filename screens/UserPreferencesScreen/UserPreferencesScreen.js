@@ -1,5 +1,5 @@
 // Core/First Party
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
@@ -20,9 +20,54 @@ import MenuButton from "../../shared/components/UI/MenuButton";
 // Constants
 import * as ColorConstants from "../../shared/constants/Colors";
 
-const UserPreferencesScreen = () => {
+const UserPreferencesScreen = (props) => {
+    const dispatch = useDispatch();
     const prefState = useSelector((state) => state.preferences);
-    // console.log(prefState);
+    const [formState, setFormState] = useState({
+        defaultFocus: prefState.options.defaultFocus,
+        defaultShortBreak: prefState.options.defaultShortBreak,
+        defaultLongBreak: prefState.options.defaultLongBreak,
+        autoContinue: prefState.options.autoContinue,
+        useSound: prefState.options.useSound,
+        cloudStorage: prefState.options.cloudStorage,
+    });
+
+    const submitHandler = () => {
+        const options = [];
+
+        for (const key of Object.keys(formState)) {
+            options.push({
+                name: key,
+                value: formState[key],
+            });
+        }
+        dispatch(preferencesActions.savePreferences(options));
+    };
+
+    useEffect(() => {
+        props.navigation.setOptions({
+            headerRight: function SaveButton(navData) {
+                return (
+                    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                        <Item
+                            title="Menu"
+                            iconName={
+                                Platform.OS === "android"
+                                    ? "md-save"
+                                    : "ios-save"
+                            }
+                            onPress={submitHandler}
+                            color={
+                                Platform.OS === "android"
+                                    ? "white"
+                                    : ColorConstants.Notice
+                            }
+                        />
+                    </HeaderButtons>
+                );
+            },
+        });
+    }, [submitHandler]);
 
     return (
         <ScrollView>
@@ -38,6 +83,14 @@ const UserPreferencesScreen = () => {
                             placeholder={(
                                 prefState.options.defaultFocus / 60
                             ).toString()}
+                            onChangeText={(text) => {
+                                setFormState((prev) => {
+                                    return {
+                                        ...prev,
+                                        defaultFocus: parseInt(text) * 60,
+                                    };
+                                });
+                            }}
                         />
                     </View>
                 </View>
@@ -47,7 +100,20 @@ const UserPreferencesScreen = () => {
                         <View style={styles.desc}>
                             <Text style={styles.subHeader}>In minutes:</Text>
                         </View>
-                        <TextInput style={styles.input} />
+                        <TextInput
+                            style={styles.input}
+                            placeholder={(
+                                prefState.options.defaultShortBreak / 60
+                            ).toString()}
+                            onChangeText={(text) => {
+                                setFormState((prev) => {
+                                    return {
+                                        ...prev,
+                                        defaultShortBreak: parseInt(text) * 60,
+                                    };
+                                });
+                            }}
+                        />
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -56,7 +122,20 @@ const UserPreferencesScreen = () => {
                         <View style={styles.desc}>
                             <Text style={styles.subHeader}>In minutes:</Text>
                         </View>
-                        <TextInput style={styles.input} />
+                        <TextInput
+                            style={styles.input}
+                            placeholder={(
+                                prefState.options.defaultLongBreak / 60
+                            ).toString()}
+                            onChangeText={(text) => {
+                                setFormState((prev) => {
+                                    return {
+                                        ...prev,
+                                        defaultLongBreak: parseInt(text) * 60,
+                                    };
+                                });
+                            }}
+                        />
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -149,39 +228,14 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderWidth: 1,
         width: "20%",
+        paddingVertical: 1,
+        paddingHorizontal: 5,
     },
 });
 
 export const ScreenOptions = (navData) => {
-    const dispatch = useDispatch();
     return {
         headerTitle: "Preferences",
-        headerRight: function SaveButton(navData) {
-            return (
-                <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                    <Item
-                        title="Menu"
-                        iconName={
-                            Platform.OS === "android" ? "md-save" : "ios-save"
-                        }
-                        onPress={() => {
-                            dispatch(
-                                preferencesActions.savePreferences([
-                                    { name: "defaultFocus", value: 500 },
-                                    { name: "defaultShortBreak", value: 20 },
-                                    { name: "defaultLongBreak", value: 300 },
-                                ])
-                            );
-                        }}
-                        color={
-                            Platform.OS === "android"
-                                ? "white"
-                                : ColorConstants.Notice
-                        }
-                    />
-                </HeaderButtons>
-            );
-        },
     };
 };
 

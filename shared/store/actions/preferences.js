@@ -1,6 +1,8 @@
 export const APPLY_PREFERENCES = "APPLY_PREFERENCES";
 export const SET_HAS_LOADED = "SET_HAS_LOADED";
 
+import { RESET } from "./timer";
+
 import * as db from "../../helpers/db";
 
 export const loadPreferences = () => {
@@ -28,12 +30,14 @@ export const savePreferences = (options) => {
         for (const option of options) {
             await db.updateOption(option.name, option.value);
             parsedOptions[option.name] = option.value;
-            // console.log(option);
         }
 
         dispatch({
             type: APPLY_PREFERENCES,
             options: parsedOptions,
+        });
+        dispatch({
+            type: RESET,
         });
     };
 };

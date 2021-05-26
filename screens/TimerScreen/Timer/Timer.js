@@ -9,19 +9,24 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 // Third Party Packages
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 // Additional Modules/Components
 // Constants
 
 const Timer = (props) => {
-    console.log(props.timerLength);
+    const timerState = useSelector((state) => state.timer);
     return (
         <View style={styles.timerFace}>
             <CountdownCircleTimer
-                key={props.timerKey}
-                isPlaying={props.isRunning}
-                duration={props.timerLength}
+                key={timerState.key}
+                isPlaying={timerState.isRunning}
+                duration={
+                    timerState.isBreak
+                        ? timerState.breakLength
+                        : timerState.focusLength
+                }
                 colors={[[props.color, 1.0]]}
                 size={250}
                 onComplete={props.onComplete}

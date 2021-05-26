@@ -34,8 +34,6 @@ const TimerScreen = (props) => {
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
     const loading = useSelector((state) => state.preferences.loading);
 
-    // console.log(timerState);
-
     useEffect(() => {
         // The code that triggers loading existing tasks from internal DB/cloud
         if (loading) {
