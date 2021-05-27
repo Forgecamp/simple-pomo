@@ -100,12 +100,12 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 key: state.key + 1,
-                focusLength: action.options.defaultFocus,
-                shortBreakLength: action.options.defaultShortBreak,
-                longBreakLength: action.options.defaultLongBreak,
+                focusLength: action.options.defaultFocus.value,
+                shortBreakLength: action.options.defaultShortBreak.value,
+                longBreakLength: action.options.defaultLongBreak.value,
                 breakLength: state.isLongBreak
-                    ? action.options.defaultLongBreak
-                    : action.options.defaultShortBreak,
+                    ? action.options.defaultLongBreak.value
+                    : action.options.defaultShortBreak.value,
             };
         }
     }

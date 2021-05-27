@@ -1,4 +1,8 @@
-import { SET_HAS_LOADED, APPLY_PREFERENCES } from "../actions/preferences";
+import {
+    SET_HAS_LOADED,
+    APPLY_PREFERENCES,
+    SET_IS_LOADING,
+} from "../actions/preferences";
 
 const initialState = {
     options: {},
@@ -16,6 +20,9 @@ export default function (state = initialState, action) {
         }
         case SET_HAS_LOADED: {
             return { ...state, loading: false };
+        }
+        case SET_IS_LOADING: {
+            return { ...state, loading: true };
         }
         default: {
             return state;

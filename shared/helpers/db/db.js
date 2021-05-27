@@ -1,173 +1,25 @@
 /* eslint-disable no-unused-vars */
 import * as SQLite from "expo-sqlite";
+import * as transactions from "./transactions";
 
 const db = SQLite.openDatabase("simplepomo.db");
 
 export const init = () => {
     const promise = new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                `
-                    CREATE TABLE IF NOT EXISTS tasks (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                        title TEXT NOT NULL, 
-                        count INTEGER NOT NULL
-                    );
-
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `
-                    CREATE TABLE IF NOT EXISTS options (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name TEXT NOT NULL UNIQUE,
-                        value INTEGER NOT NULL
-                    );
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("defaultShortBreak", 300);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("defaultFocus", 1500);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("defaultLongBreak", 900);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("focusLength", 1500);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("shortBreakLength", 300);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("longBreakLength", 900);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("autoContinue", 0);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("cloudStorage", 0);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `   
-                    INSERT INTO options (name, value) VALUES ("useSound", 1);
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
+        for (const item of transactions.init) {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    item,
+                    [],
+                    () => {
+                        resolve();
+                    },
+                    (_, err) => {
+                        reject(err);
+                    }
+                );
+            });
+        }
     });
     return promise;
 };

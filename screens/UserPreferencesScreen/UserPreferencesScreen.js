@@ -3,26 +3,27 @@ import React, { useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
-    Text,
-    ScrollView,
+    ActivityIndicator,
     Button,
     Platform,
-    TextInput,
 } from "react-native";
+// eslint-disable-next-line no-unused-vars
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 // Third Party Packages
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../../shared/components/UI/HeaderButton";
 import * as preferencesActions from "../../shared/store/actions/preferences";
+import OptionsPanel from "./OptionsPanel";
 // Additional Modules/Components
-import MenuButton from "../../shared/components/UI/MenuButton";
 // Constants
 import * as ColorConstants from "../../shared/constants/Colors";
 
 const UserPreferencesScreen = (props) => {
     const dispatch = useDispatch();
     const prefState = useSelector((state) => state.preferences);
+    const loading = useSelector((state) => state.preferences.loading);
+
     const [formState, setFormState] = useState({
         defaultFocus: prefState.options.defaultFocus,
         defaultShortBreak: prefState.options.defaultShortBreak,
@@ -45,8 +46,9 @@ const UserPreferencesScreen = (props) => {
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react/prop-types
         props.navigation.setOptions({
-            headerRight: function SaveButton(navData) {
+            headerRight: function SaveButton() {
                 return (
                     <HeaderButtons HeaderButtonComponent={HeaderButton}>
                         <Item
@@ -69,125 +71,35 @@ const UserPreferencesScreen = (props) => {
         });
     }, [submitHandler]);
 
-    return (
-        <ScrollView>
-            <View style={styles.screen}>
-                <View style={styles.section}>
-                    <Text style={styles.header}>Focus Period Length </Text>
-                    <View style={styles.control}>
-                        <View style={styles.desc}>
-                            <Text style={styles.subHeader}>In minutes:</Text>
-                        </View>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={(
-                                prefState.options.defaultFocus / 60
-                            ).toString()}
-                            onChangeText={(text) => {
-                                setFormState((prev) => {
-                                    return {
-                                        ...prev,
-                                        defaultFocus: parseInt(text) * 60,
-                                    };
-                                });
-                            }}
-                        />
-                    </View>
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.header}>Short Break Length </Text>
-                    <View style={styles.control}>
-                        <View style={styles.desc}>
-                            <Text style={styles.subHeader}>In minutes:</Text>
-                        </View>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={(
-                                prefState.options.defaultShortBreak / 60
-                            ).toString()}
-                            onChangeText={(text) => {
-                                setFormState((prev) => {
-                                    return {
-                                        ...prev,
-                                        defaultShortBreak: parseInt(text) * 60,
-                                    };
-                                });
-                            }}
-                        />
-                    </View>
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.header}>Long Break Length </Text>
-                    <View style={styles.control}>
-                        <View style={styles.desc}>
-                            <Text style={styles.subHeader}>In minutes:</Text>
-                        </View>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={(
-                                prefState.options.defaultLongBreak / 60
-                            ).toString()}
-                            onChangeText={(text) => {
-                                setFormState((prev) => {
-                                    return {
-                                        ...prev,
-                                        defaultLongBreak: parseInt(text) * 60,
-                                    };
-                                });
-                            }}
-                        />
-                    </View>
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.header}>
-                        Begin Breaks Automatically{" "}
-                    </Text>
-                    <View style={styles.control}>
-                        <View style={styles.desc}>
-                            <Text style={styles.subHeader}>
-                                Start breaks without prompting:
-                            </Text>
-                        </View>
-                        <TextInput style={styles.input} />
-                    </View>
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.header}>Sound </Text>
-                    <View style={styles.control}>
-                        <View style={styles.desc}>
-                            <Text style={styles.subHeader}>
-                                Play a sound when periods end:
-                            </Text>
-                        </View>
-                        <TextInput style={styles.input} />
-                    </View>
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.header}>Cloud Sync </Text>
-                    <View style={styles.control}>
-                        <View style={styles.desc}>
-                            <Text style={styles.subHeader}>
-                                Store tasks on the cloud:
-                            </Text>
-                        </View>
-                        <TextInput style={styles.input} />
-                    </View>
-                </View>
-                <View style={styles.section}>
-                    <View style={styles.logoutContainer}>
-                        <Button
-                            title="Logout"
-                            titleStyle={styles.logoutButton}
-                            color={ColorConstants.Caution}
-                        />
-                    </View>
+    return loading ? (
+        <View style={styles.loadingScreen}>
+            <ActivityIndicator size="large" color={ColorConstants.Notice} />
+        </View>
+    ) : (
+        <View style={styles.screen}>
+            <OptionsPanel prefState={prefState} setFormState={setFormState} />
+            <View style={styles.section}>
+                <View style={styles.logoutContainer}>
+                    <Button
+                        title="Logout"
+                        titleStyle={styles.logoutButton}
+                        color={ColorConstants.Caution}
+                    />
                 </View>
             </View>
-        </ScrollView>
+        </View>
+        // </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    loadingScreen: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
+    },
     screen: {
         alignItems: "center",
         justifyContent: "center",
@@ -233,7 +145,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export const ScreenOptions = (navData) => {
+export const ScreenOptions = () => {
     return {
         headerTitle: "Preferences",
     };

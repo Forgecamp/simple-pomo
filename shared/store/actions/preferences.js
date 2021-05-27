@@ -1,5 +1,6 @@
 export const APPLY_PREFERENCES = "APPLY_PREFERENCES";
 export const SET_HAS_LOADED = "SET_HAS_LOADED";
+export const SET_IS_LOADING = "SET_IS_LOADING";
 
 import { RESET } from "./timer";
 
@@ -12,7 +13,13 @@ export const loadPreferences = () => {
         const options = {};
 
         for (const option of parsedResults) {
-            options[option.name] = option.value;
+            options[option.name] = {
+                name: option.name,
+                value: option.value,
+                key: option.id,
+                fullName: option.fullName,
+                desc: option.desc,
+            };
         }
 
         dispatch({
@@ -28,16 +35,24 @@ export const savePreferences = (options) => {
     return async (dispatch) => {
         const parsedOptions = {};
         for (const option of options) {
-            await db.updateOption(option.name, option.value);
-            parsedOptions[option.name] = option.value;
+            await db.updateOption(option.name, option.value.value);
+            parsedOptions[option.name] = {
+                name: option.name,
+                value: option.value.value,
+                key: option.value.id,
+                fullName: option.value.fullName,
+                desc: option.value.desc,
+            };
         }
-
         dispatch({
             type: APPLY_PREFERENCES,
             options: parsedOptions,
         });
-        dispatch({
-            type: RESET,
-        });
+    };
+};
+
+export const setIsLoading = () => {
+    return {
+        type: SET_IS_LOADING,
     };
 };
