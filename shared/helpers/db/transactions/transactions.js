@@ -59,7 +59,7 @@ export const init = [
             "useSound",
             1,
             "Sound",
-            "Play a sound when periods end:"
+            "Enable sound while Simple Pomo is active: "
         );
     `,
     `

@@ -6,10 +6,10 @@ import {
     Alert,
     Modal,
     TouchableOpacity,
-    Text,
     Platform,
     ActivityIndicator,
 } from "react-native";
+import * as Notifications from "expo-notifications";
 import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
@@ -33,13 +33,30 @@ const TimerScreen = (props) => {
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
     const loading = useSelector((state) => state.preferences.loading);
+    const prefState = useSelector((state) => state.preferences);
+    const useSound = prefState.options.useSound
+        ? prefState.options.useSound.value
+        : 0;
+
+    useEffect(() => {
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldShowAlert: false,
+                shouldPlaySound: useSound ? true : false,
+            }),
+        });
+    }, [useSound]);
 
     useEffect(() => {
         // The code that triggers loading existing tasks from internal DB/cloud
-        if (loading) {
-            dispatch(taskActions.loadTasks());
-            dispatch(preferencesActions.loadPreferences());
-        }
+        const loadHandler = async () => {
+            if (loading) {
+                await dispatch(taskActions.loadTasks());
+                await dispatch(preferencesActions.loadPreferences());
+            }
+        };
+
+        loadHandler();
     }, [loading]);
 
     const resetTimerHandler = async () => {
