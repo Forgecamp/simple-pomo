@@ -34,9 +34,13 @@ const TimerScreen = (props) => {
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
     const loading = useSelector((state) => state.preferences.loading);
     const prefState = useSelector((state) => state.preferences);
+    const autoContinue = prefState.options.autoContinue
+        ? prefState.options.autoContinue.value
+        : 0;
     const useSound = prefState.options.useSound
         ? prefState.options.useSound.value
         : 0;
+    const isBreak = timerState.isBreak;
 
     useEffect(() => {
         Notifications.setNotificationHandler({
@@ -69,7 +73,8 @@ const TimerScreen = (props) => {
                 timerActions.stop(
                     timerState.isBreak,
                     currentTaskId,
-                    currentTaskCount
+                    currentTaskCount,
+                    autoContinue
                 )
             );
             return;
@@ -98,14 +103,14 @@ const TimerScreen = (props) => {
         );
     };
 
-    const playPauseHandler = async () => {
+    const playPauseHandler = async (isAuto = false) => {
         const currTime = new Date().getTime();
         const offset =
             (timerState.isBreak
                 ? timerState.breakLength
                 : timerState.focusLength) -
             timerState.timeElapsed / 1000;
-        if (timerState.isRunning) {
+        if (timerState.isRunning && !isAuto) {
             dispatch(timerActions.playPause());
         } else {
             dispatch(timerActions.playPause(currTime + offset * 1000));
@@ -140,6 +145,10 @@ const TimerScreen = (props) => {
                 title={timerState.isBreak ? "Break" : currentTask}
                 onComplete={() => {
                     stopHandler(true);
+                    if (autoContinue && !isBreak) {
+                        console.log(timerState.isRunning);
+                        playPauseHandler(true);
+                    }
                 }}
             />
             <ControlBar
