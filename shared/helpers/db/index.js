@@ -6,4 +6,6 @@ export {
     incrementTask,
     decrementTask,
     updateTask,
+    updateOption,
+    fetchOptions,
 } from "./db";

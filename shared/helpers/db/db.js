@@ -1,46 +1,25 @@
 /* eslint-disable no-unused-vars */
 import * as SQLite from "expo-sqlite";
+import * as transactions from "./transactions";
 
 const db = SQLite.openDatabase("simplepomo.db");
 
 export const init = () => {
     const promise = new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                `
-                    CREATE TABLE IF NOT EXISTS tasks (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                        title TEXT NOT NULL, 
-                        count INTEGER NOT NULL
-                    );
-
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
-        db.transaction((tx) => {
-            tx.executeSql(
-                `
-                    CREATE TABLE IF NOT EXISTS options (
-                        oid INTEGER PRIMARY KEY AUTOINCREMENT,
-                        value INTEGER NOT NULL
-                    );
-                `,
-                [],
-                () => {
-                    resolve();
-                },
-                (_, err) => {
-                    reject(err);
-                }
-            );
-        });
+        for (const item of transactions.init) {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    item,
+                    [],
+                    () => {
+                        resolve();
+                    },
+                    (_, err) => {
+                        reject(err);
+                    }
+                );
+            });
+        }
     });
     return promise;
 };
@@ -174,5 +153,48 @@ export const updateTask = (id, newTitle) => {
         });
     });
 
+    return promise;
+};
+
+export const updateOption = (name, newValue) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    UPDATE options
+                    SET value = ?
+                    WHERE name = ?;
+                `,
+                [newValue, name],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+
+    return promise;
+};
+
+export const fetchOptions = () => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `
+                    SELECT * FROM options
+                `,
+                [],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
     return promise;
 };

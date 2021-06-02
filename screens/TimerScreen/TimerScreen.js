@@ -6,9 +6,10 @@ import {
     Alert,
     Modal,
     TouchableOpacity,
-    Text,
     Platform,
+    ActivityIndicator,
 } from "react-native";
+import * as Notifications from "expo-notifications";
 import { Ionicons } from "@expo/vector-icons";
 // Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
@@ -16,9 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
-import MenuButton from "../../shared/components/UI/MenuButton";
 import * as timerActions from "../../shared/store/actions/timer";
 import * as taskActions from "../../shared/store/actions/tasks";
+import * as preferencesActions from "../../shared/store/actions/preferences";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
@@ -31,11 +32,36 @@ const TimerScreen = (props) => {
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
+    const loading = useSelector((state) => state.preferences.loading);
+    const prefState = useSelector((state) => state.preferences);
+    const autoContinue = prefState.options.autoContinue
+        ? prefState.options.autoContinue.value
+        : 0;
+    const useSound = prefState.options.useSound
+        ? prefState.options.useSound.value
+        : 0;
+    const isBreak = timerState.isBreak;
+
+    useEffect(() => {
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldShowAlert: false,
+                shouldPlaySound: useSound ? true : false,
+            }),
+        });
+    }, [useSound]);
 
     useEffect(() => {
         // The code that triggers loading existing tasks from internal DB/cloud
-        dispatch(taskActions.loadTasks());
-    }, []);
+        const loadHandler = async () => {
+            if (loading) {
+                await dispatch(taskActions.loadTasks());
+                await dispatch(preferencesActions.loadPreferences());
+            }
+        };
+
+        loadHandler();
+    }, [loading]);
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
@@ -47,7 +73,8 @@ const TimerScreen = (props) => {
                 timerActions.stop(
                     timerState.isBreak,
                     currentTaskId,
-                    currentTaskCount
+                    currentTaskCount,
+                    autoContinue
                 )
             );
             return;
@@ -76,14 +103,14 @@ const TimerScreen = (props) => {
         );
     };
 
-    const playPauseHandler = async () => {
+    const playPauseHandler = async (isAuto = false) => {
         const currTime = new Date().getTime();
         const offset =
             (timerState.isBreak
                 ? timerState.breakLength
                 : timerState.focusLength) -
             timerState.timeElapsed / 1000;
-        if (timerState.isRunning) {
+        if (timerState.isRunning && !isAuto) {
             dispatch(timerActions.playPause());
         } else {
             dispatch(timerActions.playPause(currTime + offset * 1000));
@@ -94,7 +121,11 @@ const TimerScreen = (props) => {
         setModalVisible((prev) => !prev);
     };
 
-    return (
+    return loading ? (
+        <View style={styles.loadingScreen}>
+            <ActivityIndicator size="large" color={ColorsConstant.Notice} />
+        </View>
+    ) : (
         <View style={styles.main}>
             <Timer
                 timerLength={
@@ -114,6 +145,10 @@ const TimerScreen = (props) => {
                 title={timerState.isBreak ? "Break" : currentTask}
                 onComplete={() => {
                     stopHandler(true);
+                    if (autoContinue && !isBreak) {
+                        console.log(timerState.isRunning);
+                        playPauseHandler(true);
+                    }
                 }}
             />
             <ControlBar
@@ -157,11 +192,17 @@ const TimerScreen = (props) => {
 export const ScreenOptions = (navData) => {
     return {
         headerTitle: "Simple Pomo",
-        headerLeft: () => MenuButton(navData),
     };
 };
 
 const styles = StyleSheet.create({
+    loadingScreen: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
+    },
     main: {
         flex: 1,
         justifyContent: "space-around",
