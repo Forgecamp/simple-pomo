@@ -8,6 +8,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+shared/helpers/Firebase/config.js
+.env
 
 # macOS
 .DS_Store

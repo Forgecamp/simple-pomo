@@ -6,6 +6,7 @@ import timerReducer from "./shared/store/reducers/timer";
 import tasksReducer from "./shared/store/reducers/tasks";
 import preferencesReducer from "./shared/store/reducers/preferences";
 import ReduxThunk from "redux-thunk";
+import StartupScreen from "./screens/StartupScreen";
 
 import { init } from "./shared/helpers/db";
 
@@ -29,7 +30,7 @@ const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 export default function App() {
     return (
         <Provider store={store}>
-            <AppNavigator />
+            <StartupScreen />
         </Provider>
     );
 }
