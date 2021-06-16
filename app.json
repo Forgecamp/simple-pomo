@@ -29,7 +29,8 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "ANDROID_KEY": "435636724308-dfikr32hbhg75kguu4sm4jeq82ose89m.apps.googleusercontent.com"
+      "ANDROID_KEY": "435636724308-dfikr32hbhg75kguu4sm4jeq82ose89m.apps.googleusercontent.com",
+      "EXPO_CLIENT": "435636724308-87pbk73f9v2f1aonejqddm858al3lafj.apps.googleusercontent.com"
     }
   }
 }

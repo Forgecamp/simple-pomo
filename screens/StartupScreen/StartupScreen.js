@@ -9,8 +9,7 @@ const StartupScreen = () => {
     const [password, setPassword] = useState(null);
 
     const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-        expoClientId:
-            "435636724308-87pbk73f9v2f1aonejqddm858al3lafj.apps.googleusercontent.com",
+        expoClientId: ExpoConstants.manifest.extra.EXPO_CLIENT,
         androidClientId: ExpoConstants.manifest.extra.ANDROID_KEY,
     });
     useEffect(() => {
