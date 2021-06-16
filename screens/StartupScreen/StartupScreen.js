@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, Button } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Button, Platform } from "react-native";
 import ExpoConstants from "expo-constants";
 import { firebase } from "../../shared/helpers/firebase";
 import * as Google from "expo-auth-session/providers/google";
+import * as Apple from "expo-apple-authentication";
 
 const StartupScreen = () => {
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-
-    const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest({
         expoClientId: ExpoConstants.manifest.extra.EXPO_CLIENT,
         androidClientId: ExpoConstants.manifest.extra.ANDROID_KEY,
     });
-    useEffect(() => {
-        if (response?.type === "success") {
-            const { params } = response;
-            // console.log(params.id_token);
 
+    useEffect(() => {
+        if (gResponse?.type === "success") {
+            const { params } = gResponse;
             const credential = firebase.auth.GoogleAuthProvider.credential(
                 params.id_token
             );
@@ -44,87 +41,44 @@ const StartupScreen = () => {
                     console.log(error.message);
                 });
         }
-    }, [response]);
-
-    const signupHandler = () => {
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then((response) => {
-                const uid = response.user.uid;
-                const data = {
-                    id: uid,
-                    email,
-                    test: "test",
-                };
-                const usersRef = firebase.firestore().collection("users");
-                usersRef
-                    .doc(uid)
-                    .set(data)
-                    .catch((error) => {
-                        alert(error);
-                    });
-            })
-            .catch((error) => {
-                alert(error);
-            });
-    };
-
-    const loginHandler = () => {
-        firebase.auth();
-
-        // .signInWithEmailAndPassword(email, password)
-        // .then((response) => {
-        //     const uid = response.user.uid;
-        //     console.log(uid);
-        //     const usersRef = firebase.firestore().collection("users");
-        //     usersRef
-        //         .doc(uid)
-        //         .get()
-        //         .then((firestoreDoc) => {
-        //             if (!firestoreDoc.exists) {
-        //                 alert("User does not exist anymore.");
-        //                 return;
-        //             } else {
-        //                 console.log(firestoreDoc.data());
-        //             }
-        //         });
-        // })
-        // .catch((error) => {
-        //     alert(error);
-        // });
-    };
+    }, [gResponse]);
 
     return (
         <View style={styles.loadingScreen}>
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email Address:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email Address"
-                    value={email}
-                    onChangeText={(text) => {
-                        setEmail(() => text);
-                    }}
-                />
-                <Text style={styles.label}>Password:</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={(text) => {
-                        setPassword(() => text);
-                    }}
-                />
-            </View>
             <View style={styles.buttonContainer}>
-                <Button title="Submit" onPress={signupHandler} />
+                {Apple.isAvailableAsync() === true && (
+                    <Apple.AppleAuthenticationButton
+                        buttonType={Apple.AppleAuthenticationButtonType.SIGN_IN}
+                        buttonStyle={Apple.AppleAuthenticationButtonStyle.BLACK}
+                        cornerRadius={5}
+                        style={{ width: 200, height: 44 }}
+                        onPress={async () => {
+                            try {
+                                const credential = await Apple.signInAsync({
+                                    requestedScopes: [
+                                        Apple.AppleAuthenticationScope
+                                            .FULL_NAME,
+                                        Apple.AppleAuthenticationScope.EMAIL,
+                                    ],
+                                });
+                                // signed in
+                                console.log(credential);
+                            } catch (e) {
+                                if (e.code === "ERR_CANCELED") {
+                                    // handle that the user canceled the sign-in flow
+                                } else {
+                                    // handle other errors
+                                }
+                            }
+                        }}
+                    />
+                )}
             </View>
             <View style={styles.buttonContainer}>
                 <Button
-                    title="Login"
+                    title="Login with Google"
                     onPress={() => {
-                        promptAsync();
+                        gPromptAsync();
                     }}
                 />
             </View>
