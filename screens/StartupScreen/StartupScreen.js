@@ -46,7 +46,7 @@ const StartupScreen = () => {
     return (
         <View style={styles.loadingScreen}>
             <View style={styles.buttonContainer}>
-                {Apple.isAvailableAsync() === true && (
+                {Platform.OS === "ios" && (
                     <Apple.AppleAuthenticationButton
                         buttonType={Apple.AppleAuthenticationButtonType.SIGN_IN}
                         buttonStyle={Apple.AppleAuthenticationButtonStyle.BLACK}
