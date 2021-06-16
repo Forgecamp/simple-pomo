@@ -27,6 +27,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "ANDROID_KEY": "435636724308-dfikr32hbhg75kguu4sm4jeq82ose89m.apps.googleusercontent.com"
     }
   }
 }

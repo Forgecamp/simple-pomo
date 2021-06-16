@@ -1,26 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, Button } from "react-native";
 import ExpoConstants from "expo-constants";
 import { firebase } from "../../shared/helpers/firebase";
+import * as Google from "expo-auth-session/providers/google";
 
 const StartupScreen = () => {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
 
+    const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+        expoClientId:
+            "435636724308-87pbk73f9v2f1aonejqddm858al3lafj.apps.googleusercontent.com",
+        androidClientId: ExpoConstants.manifest.extra.ANDROID_KEY,
+    });
+    useEffect(() => {
+        if (response?.type === "success") {
+            const { params } = response;
+            // console.log(params.id_token);
+
+            const credential = firebase.auth.GoogleAuthProvider.credential(
+                params.id_token
+            );
+
+            firebase
+                .auth()
+                .signInWithCredential(credential)
+                .then((response) => {
+                    const uid = response.user.uid;
+                    const email = response.user.email;
+                    const data = {
+                        id: uid,
+                        email,
+                        test: "test",
+                    };
+                    const usersRef = firebase.firestore().collection("users");
+                    usersRef
+                        .doc(uid)
+                        .set(data)
+                        .catch((error) => {
+                            alert(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error.message);
+                });
+        }
+    }, [response]);
+
     const signupHandler = () => {
-        // firebase
-        //     .auth()
-        //     .createUserWithEmailAndPassword(email, password)
-        //     .then((userCredential) => {
-        //         // Signed in
-        //         const user = userCredential.user;
-        //         console.log(user);
-        //     })
-        //     .catch((error) => {
-        //         const errorCode = error.code;
-        //         const errorMessage = error.message;
-        //         console.log(errorCode, errorMessage);
-        //     });
         firebase
             .auth()
             .createUserWithEmailAndPassword(email, password)
@@ -45,28 +72,28 @@ const StartupScreen = () => {
     };
 
     const loginHandler = () => {
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then((response) => {
-                const uid = response.user.uid;
-                console.log(uid);
-                const usersRef = firebase.firestore().collection("users");
-                usersRef
-                    .doc(uid)
-                    .get()
-                    .then((firestoreDoc) => {
-                        if (!firestoreDoc.exists) {
-                            alert("User does not exist anymore.");
-                            return;
-                        } else {
-                            console.log(firestoreDoc.data());
-                        }
-                    });
-            })
-            .catch((error) => {
-                alert(error);
-            });
+        firebase.auth();
+
+        // .signInWithEmailAndPassword(email, password)
+        // .then((response) => {
+        //     const uid = response.user.uid;
+        //     console.log(uid);
+        //     const usersRef = firebase.firestore().collection("users");
+        //     usersRef
+        //         .doc(uid)
+        //         .get()
+        //         .then((firestoreDoc) => {
+        //             if (!firestoreDoc.exists) {
+        //                 alert("User does not exist anymore.");
+        //                 return;
+        //             } else {
+        //                 console.log(firestoreDoc.data());
+        //             }
+        //         });
+        // })
+        // .catch((error) => {
+        //     alert(error);
+        // });
     };
 
     return (
@@ -95,7 +122,12 @@ const StartupScreen = () => {
                 <Button title="Submit" onPress={signupHandler} />
             </View>
             <View style={styles.buttonContainer}>
-                <Button title="Login" onPress={loginHandler} />
+                <Button
+                    title="Login"
+                    onPress={() => {
+                        promptAsync();
+                    }}
+                />
             </View>
         </View>
     );
