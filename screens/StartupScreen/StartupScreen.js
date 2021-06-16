@@ -3,7 +3,8 @@ import { View, StyleSheet, Button, Platform } from "react-native";
 import ExpoConstants from "expo-constants";
 import { firebase } from "../../shared/helpers/firebase";
 import * as Google from "expo-auth-session/providers/google";
-import * as Apple from "expo-apple-authentication";
+import * as AppleAuthentication from "expo-apple-authentication";
+import Crypto from "expo-crypto";
 
 const StartupScreen = () => {
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest({
@@ -43,34 +44,54 @@ const StartupScreen = () => {
         }
     }, [gResponse]);
 
+    const signInWithApple = () => {
+        const nonce = Math.random().toString(36).substring(2, 10);
+
+        return Crypto.digestStringAsync(
+            Crypto.CryptoDigestAlgorithm.SHA256,
+            nonce
+        )
+            .then((hashedNonce) =>
+                AppleAuthentication.signInAsync({
+                    requestedScopes: [
+                        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                    ],
+                    nonce: hashedNonce,
+                })
+            )
+            .then((appleCredential) => {
+                console.log(appleCredential);
+                // const { identityToken } = appleCredential;
+                // const provider = new firebase.auth.OAuthProvider("apple.com");
+                // const credential = provider.credential({
+                //     idToken: identityToken,
+                //     rawNonce: nonce,
+                // });
+                // return firebase.auth().signInWithCredential(credential);
+                // // Successful sign in is handled by firebase.auth().onAuthStateChanged
+            })
+            .catch((error) => {
+                // ...
+            });
+    };
+
     return (
         <View style={styles.loadingScreen}>
             <View style={styles.buttonContainer}>
                 {Platform.OS === "ios" && (
-                    <Apple.AppleAuthenticationButton
-                        buttonType={Apple.AppleAuthenticationButtonType.SIGN_IN}
-                        buttonStyle={Apple.AppleAuthenticationButtonStyle.BLACK}
+                    <AppleAuthentication.AppleAuthenticationButton
+                        buttonType={
+                            AppleAuthentication.AppleAuthenticationButtonType
+                                .SIGN_IN
+                        }
+                        buttonStyle={
+                            AppleAuthentication.AppleAuthenticationButtonStyle
+                                .BLACK
+                        }
                         cornerRadius={5}
                         style={{ width: 200, height: 44 }}
-                        onPress={async () => {
-                            try {
-                                const credential = await Apple.signInAsync({
-                                    requestedScopes: [
-                                        Apple.AppleAuthenticationScope
-                                            .FULL_NAME,
-                                        Apple.AppleAuthenticationScope.EMAIL,
-                                    ],
-                                });
-                                // signed in
-                                console.log(credential);
-                            } catch (e) {
-                                if (e.code === "ERR_CANCELED") {
-                                    // handle that the user canceled the sign-in flow
-                                } else {
-                                    // handle other errors
-                                }
-                            }
-                        }}
+                        onPress={signInWithApple}
                     />
                 )}
             </View>
