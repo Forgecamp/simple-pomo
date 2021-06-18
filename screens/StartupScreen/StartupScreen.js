@@ -1,15 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Button, Platform } from "react-native";
 import ExpoConstants from "expo-constants";
 import { firebase } from "../../shared/helpers/firebase";
 import * as Google from "expo-auth-session/providers/google";
 import Apple from "../../shared/helpers/auth/Apple";
+import { useDispatch, useSelector } from "react-redux";
+import * as authActions from "../../shared/store/actions/auth";
 
 const StartupScreen = () => {
+    const dispatch = useDispatch();
+    const uid = useSelector((state) => state.auth.uid);
+
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest({
         expoClientId: ExpoConstants.manifest.extra.EXPO_CLIENT,
         androidClientId: ExpoConstants.manifest.extra.ANDROID_KEY,
     });
+
+    firebase.auth().onAuthStateChanged((user) => {
+        dispatch(authActions.authenticate(user));
+    });
+
+    useEffect(() => {
+        console.log(uid);
+    }, [uid]);
 
     useEffect(() => {
         if (gResponse?.type === "success") {
@@ -53,6 +66,14 @@ const StartupScreen = () => {
                     title="Login with Google"
                     onPress={() => {
                         gPromptAsync();
+                    }}
+                />
+            </View>
+            <View style={styles.buttonContainer}>
+                <Button
+                    title="Logout"
+                    onPress={() => {
+                        firebase.auth().signOut();
                     }}
                 />
             </View>
