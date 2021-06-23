@@ -1,10 +1,10 @@
 export const APPLY_PREFERENCES = "APPLY_PREFERENCES";
 export const SET_HAS_LOADED = "SET_HAS_LOADED";
 export const SET_IS_LOADING = "SET_IS_LOADING";
-
-import { RESET } from "./timer";
+export const CLOUD_OPT_OUT = "CLOUD_OPT_OUT";
 
 import * as db from "../../helpers/db";
+import { SET_USER } from "./auth";
 
 export const loadPreferences = () => {
     return async (dispatch) => {
@@ -47,6 +47,15 @@ export const savePreferences = (options) => {
         dispatch({
             type: APPLY_PREFERENCES,
             options: parsedOptions,
+        });
+    };
+};
+
+export const cloudOptOut = () => {
+    return async (dispatch) => {
+        await db.updateOption("cloudStorage", 0);
+        dispatch({
+            type: CLOUD_OPT_OUT,
         });
     };
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { AppNavigator } from "./shared/navigation/AppNavigator";
+import StartUpNavigator from "./shared/navigation/StartUpNavigator";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import timerReducer from "./shared/store/reducers/timer";
@@ -7,7 +7,6 @@ import tasksReducer from "./shared/store/reducers/tasks";
 import preferencesReducer from "./shared/store/reducers/preferences";
 import authReducer from "./shared/store/reducers/auth";
 import ReduxThunk from "redux-thunk";
-import StartupScreen from "./screens/StartupScreen";
 
 import { init } from "./shared/helpers/db";
 
@@ -32,7 +31,7 @@ const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 export default function App() {
     return (
         <Provider store={store}>
-            <StartupScreen />
+            <StartUpNavigator />
         </Provider>
     );
 }

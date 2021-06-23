@@ -2,6 +2,7 @@ import {
     SET_HAS_LOADED,
     APPLY_PREFERENCES,
     SET_IS_LOADING,
+    CLOUD_OPT_OUT,
 } from "../actions/preferences";
 
 const initialState = {
@@ -23,6 +24,17 @@ export default function (state = initialState, action) {
         }
         case SET_IS_LOADING: {
             return { ...state, loading: true };
+        }
+        case CLOUD_OPT_OUT: {
+            return { ...state, 
+                options: { ...state.options, "cloudStorage": {
+                    "desc": "Store tasks on the cloud:",
+                    "fullName": "Cloud Sync",
+                    "key": 6,
+                    "name": "cloudStorage",
+                    "value": 0,
+                } 
+            }}
         }
         default: {
             return state;

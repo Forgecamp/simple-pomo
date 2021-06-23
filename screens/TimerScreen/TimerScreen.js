@@ -18,8 +18,7 @@ import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
 import * as timerActions from "../../shared/store/actions/timer";
-import * as taskActions from "../../shared/store/actions/tasks";
-import * as preferencesActions from "../../shared/store/actions/preferences";
+
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
@@ -50,18 +49,6 @@ const TimerScreen = (props) => {
             }),
         });
     }, [useSound]);
-
-    useEffect(() => {
-        // The code that triggers loading existing tasks from internal DB/cloud
-        const loadHandler = async () => {
-            if (loading) {
-                await dispatch(taskActions.loadTasks());
-                await dispatch(preferencesActions.loadPreferences());
-            }
-        };
-
-        loadHandler();
-    }, [loading]);
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());

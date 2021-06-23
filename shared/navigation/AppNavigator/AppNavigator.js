@@ -1,8 +1,6 @@
-// TODO: Basic stack and drawer navigatiors that lead to placeholder pages.
 import React from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import TimerScreen, { TimerScreenOptions } from "../../../screens/TimerScreen";
@@ -12,6 +10,7 @@ import AboutScreen, {
 import UserPreferencesScreen, {
     ScreenOptions as PrefsScreenOptions,
 } from "../../../screens/UserPreferencesScreen";
+import AuthScreen from '../../../screens/AuthScreen';
 import * as ColorsConstants from "../../constants/Colors";
 import MenuButton from "../../components/UI/MenuButton";
 
@@ -19,6 +18,7 @@ const TimerStackNavigator = createStackNavigator();
 const AboutStackNavigator = createStackNavigator();
 const UserPrefsStackNavigator = createStackNavigator();
 const AppDrawerNavigator = createDrawerNavigator();
+const AuthStackNavigator = createStackNavigator();
 
 const defaultScreenOptions = (navData) => {
     const isBreak = useSelector((state) => state.timer.isBreak);
@@ -68,9 +68,23 @@ const UserPrefsNavigator = () => {
     );
 };
 
+export const AuthNavigator = () => {
+    return (
+        <AuthStackNavigator.Navigator screenOptions={defaultScreenOptions}>
+            <AuthStackNavigator.Screen 
+                component={AuthScreen}
+                name="Authentication"
+                options={{
+                    headerLeft: null,
+                }}
+            />
+        </AuthStackNavigator.Navigator>
+    )
+}
+
 export const AppNavigator = () => {
     return (
-        <NavigationContainer>
+        
             <AppDrawerNavigator.Navigator
                 drawerContentOptions={{
                     activeTintColor: ColorsConstants.Notice,
@@ -90,6 +104,6 @@ export const AppNavigator = () => {
                     name="About"
                 />
             </AppDrawerNavigator.Navigator>
-        </NavigationContainer>
+        
     );
 };

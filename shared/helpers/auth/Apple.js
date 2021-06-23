@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import * as Crypto from "expo-crypto";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { firebase } from "../firebase";
@@ -53,7 +53,7 @@ const Apple = () => {
                 console.log(error);
             });
     };
-    return (
+    return Platform.OS === "ios" ? (
         <View style={{ alignItems: "center" }}>
             <AppleAuthentication.AppleAuthenticationButton
                 buttonType={
@@ -67,7 +67,7 @@ const Apple = () => {
                 onPress={loginWithApple}
             />
         </View>
-    );
+    ) : null;
 };
 
 export default Apple;
