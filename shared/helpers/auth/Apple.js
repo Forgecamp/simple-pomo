@@ -4,7 +4,7 @@ import * as Crypto from "expo-crypto";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { firebase } from "../firebase";
 
-const Apple = () => {
+const Apple = (props) => {
     const loginWithApple = async () => {
         const csrf = Math.random().toString(36).substring(2, 15);
         const nonce = Math.random().toString(36).substring(2, 10);
@@ -27,31 +27,7 @@ const Apple = () => {
             idToken: identityToken,
             rawNonce: nonce,
         });
-        firebase
-            .auth()
-            .signInWithCredential(authCredential)
-            .then((response) => {
-                const uid = response.user.uid;
-                const email = response.user.email;
-                const data = {
-                    id: uid,
-                    email,
-                    test: "test",
-                };
-                const usersRef = firebase.firestore().collection("users");
-                usersRef
-                    .doc(uid)
-                    .set(data)
-                    .catch((error) => {
-                        alert(error);
-                    });
-            })
-            .catch((error) => {
-                // An error occurred. If error.code == 'auth/missing-or-invalid-nonce',
-                // make sure you're sending the SHA256-hashed nonce as a hex string
-                // with your request to Apple.
-                console.log(error);
-            });
+        props.authHandler(authCredential);
     };
     return Platform.OS === "ios" ? (
         <View style={{ alignItems: "center" }}>

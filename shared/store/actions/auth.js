@@ -11,16 +11,22 @@ export const authenticate = (credential) => {
         dispatch(setUserLoading());
         try {
             const res = await firebase.auth().signInWithCredential(credential);
-            const user = await res.user;
-            const uid = user.uid;
-            const email = user.email;
-            const data = {
-                id: uid,
-                email,
-                test: "test",
-            };
-            const usersRef = await firebase.firestore().collection("users");
-            usersRef.doc(uid).set(data);
+            const user = res.user;
+            const firestore = firebase.firestore();
+            const record = await firestore
+                .collection("users")
+                .doc(user.uid)
+                .get();
+            if (record.exists) {
+                const data = record.data();
+            } else {
+                firestore.collection("users").doc(user.uid).set({
+                    email: user.email,
+                    id: user.uid,
+                    tasks: [],
+                    options: [],
+                });
+            }
         } catch (error) {
             console.log(error);
         }

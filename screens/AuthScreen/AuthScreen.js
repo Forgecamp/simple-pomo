@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Button, ActivityIndicator } from "react-native";
 import { firebase } from "../../shared/helpers/firebase";
 import GoogleButton from "../../shared/helpers/auth/Google";
-import Apple from "../../shared/helpers/auth/Apple";
+import AppleButton from "../../shared/helpers/auth/Apple";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../../shared/store/actions/auth";
 import * as preferencesActions from "../../shared/store/actions/preferences";
@@ -16,6 +16,10 @@ const StartupScreen = () => {
         dispatch(authActions.setUser(user));
     });
 
+    const handleAuth = (credential) => {
+        dispatch(authActions.authenticate(credential));
+    };
+
     return loading ? (
         <View style={styles.loadingScreen}>
             <ActivityIndicator size="large" color={ColorsConstant.Notice} />
@@ -23,10 +27,10 @@ const StartupScreen = () => {
     ) : (
         <View style={styles.loadingScreen}>
             <View style={styles.buttonContainer}>
-                <Apple />
+                <AppleButton authHandler={handleAuth} />
             </View>
             <View style={styles.buttonContainer}>
-                <GoogleButton />
+                <GoogleButton authHandler={handleAuth} />
             </View>
             <View style={styles.buttonContainer}>
                 <Button

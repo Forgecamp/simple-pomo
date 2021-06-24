@@ -5,11 +5,33 @@ export const CLOUD_OPT_OUT = "CLOUD_OPT_OUT";
 
 import * as db from "../../helpers/db";
 import { SET_USER } from "./auth";
+import { firebase } from "../../helpers/firebase";
 
 export const loadPreferences = () => {
     return async (dispatch) => {
-        const dbResult = await db.fetchOptions();
-        const parsedResults = await dbResult.rows["_array"];
+        const uid = await firebase.auth().currentUser?.uid;
+        const firestore = firebase.firestore();
+        let cloudOptions = [];
+        let parsedResults;
+        if (uid !== undefined) {
+            const record = await firestore.collection("users").doc(uid).get();
+            if (record.exists) {
+                cloudOptions = await record.data().options;
+            }
+        }
+
+        if (cloudOptions.length === 0) {
+            const dbResult = await db.fetchOptions();
+            parsedResults = await dbResult.rows["_array"];
+            if (uid !== undefined) {
+                await firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({ options: parsedResults });
+            }
+        } else {
+            parsedResults = [...cloudOptions];
+        }
         const options = {};
 
         for (const option of parsedResults) {
@@ -21,7 +43,6 @@ export const loadPreferences = () => {
                 desc: option.desc,
             };
         }
-
         dispatch({
             type: APPLY_PREFERENCES,
             options: options,
@@ -33,6 +54,14 @@ export const loadPreferences = () => {
 
 export const savePreferences = (options) => {
     return async (dispatch) => {
+        const uid = await firebase.auth().currentUser?.uid;
+        const firestore = firebase.firestore();
+        if (uid !== undefined) {
+            await firestore
+                .collection("users")
+                .doc(uid)
+                .update({ options: options });
+        }
         const parsedOptions = {};
         for (const option of options) {
             await db.updateOption(option.name, option.value.value);
