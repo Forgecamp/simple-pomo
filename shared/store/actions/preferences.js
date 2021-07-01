@@ -4,79 +4,80 @@ export const SET_IS_LOADING = "SET_IS_LOADING";
 export const CLOUD_OPT_OUT = "CLOUD_OPT_OUT";
 
 import * as db from "../../helpers/db";
-import { SET_USER } from "./auth";
 import { firebase } from "../../helpers/firebase";
 
 export const loadPreferences = () => {
     return async (dispatch) => {
-        const uid = await firebase.auth().currentUser?.uid;
-        const firestore = firebase.firestore();
-        let cloudOptions = [];
-        let parsedResults;
-        if (uid !== undefined) {
-            const record = await firestore.collection("users").doc(uid).get();
-            if (record.exists) {
-                cloudOptions = await record.data().options;
-            }
-        }
-
-        if (cloudOptions.length === 0) {
+        try {
+            const uid = await firebase.auth().currentUser?.uid;
             const dbResult = await db.fetchOptions();
-            parsedResults = await dbResult.rows["_array"];
+            const parsedResults = await dbResult.rows["_array"];
+            let options = {};
+
+            for (const option of parsedResults) {
+                options[option.name] = {
+                    name: option.name,
+                    value: option.value,
+                    key: option.id,
+                    fullName: option.fullName,
+                    desc: option.desc,
+                };
+            }
             if (uid !== undefined) {
-                await firestore
+                const firestore = firebase.firestore();
+                const record = await firestore
                     .collection("users")
                     .doc(uid)
-                    .update({ options: parsedResults });
+                    .get();
+                let cloudOptions = await record.data().options;
+                if (Object.keys(cloudOptions).length === 0) {
+                    await firestore
+                        .collection("users")
+                        .doc(uid)
+                        .update({ options: options });
+                } else {
+                    options = { ...cloudOptions };
+                }
             }
-        } else {
-            parsedResults = [...cloudOptions];
-        }
-        const options = {};
+            dispatch({
+                type: APPLY_PREFERENCES,
+                options: options,
+            });
 
-        for (const option of parsedResults) {
-            options[option.name] = {
-                name: option.name,
-                value: option.value,
-                key: option.id,
-                fullName: option.fullName,
-                desc: option.desc,
-            };
+            dispatch({ type: SET_HAS_LOADED });
+        } catch (error) {
+            console.log(error);
         }
-        dispatch({
-            type: APPLY_PREFERENCES,
-            options: options,
-        });
-
-        dispatch({ type: SET_HAS_LOADED });
     };
 };
 
 export const savePreferences = (options) => {
     return async (dispatch) => {
-        const uid = await firebase.auth().currentUser?.uid;
-        const firestore = firebase.firestore();
-        if (uid !== undefined) {
-            await firestore
-                .collection("users")
-                .doc(uid)
-                .update({ options: options });
+        try {
+            const uid = await firebase.auth().currentUser?.uid;
+            const firestore = firebase.firestore();
+
+            if (uid === undefined) {
+                for (const key of Object.keys(options)) {
+                    await db.updateOption(
+                        options[key].name,
+                        options[key].value
+                    );
+                }
+            } else {
+                await firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({ options: options });
+            }
+
+            dispatch({
+                type: APPLY_PREFERENCES,
+                options: options,
+            });
+        } catch (error) {
+            console.log(error);
         }
-        const parsedOptions = {};
-        for (const option of options) {
-            await db.updateOption(option.name, option.value.value);
-            parsedOptions[option.name] = {
-                name: option.name,
-                value: option.value.value,
-                key: option.value.id,
-                fullName: option.value.fullName,
-                desc: option.value.desc,
-            };
-        }
-        dispatch({
-            type: APPLY_PREFERENCES,
-            options: parsedOptions,
-        });
     };
 };
 

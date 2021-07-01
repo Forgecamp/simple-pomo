@@ -9,6 +9,7 @@ const firebaseConfig = {
     storageBucket: "simple-pomo.appspot.com",
     messagingSenderId: "596936347484",
     appId: "1:596936347484:web:b4ec7a693dd872ddcd3b99",
+    databaseURL: "https://simple-pomo.firebaseio.com",
 };
 
 if (!firebase.apps.length) {

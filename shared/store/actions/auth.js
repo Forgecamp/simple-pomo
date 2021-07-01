@@ -24,13 +24,12 @@ export const authenticate = (credential) => {
                     email: user.email,
                     id: user.uid,
                     tasks: [],
-                    options: [],
+                    options: {},
                 });
             }
         } catch (error) {
             console.log(error);
         }
-        dispatch(setUserLoaded());
     };
 };
 

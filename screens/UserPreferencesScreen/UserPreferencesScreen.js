@@ -36,15 +36,7 @@ const UserPreferencesScreen = (props) => {
     });
 
     const submitHandler = () => {
-        const options = [];
-
-        for (const key of Object.keys(formState)) {
-            options.push({
-                name: key,
-                value: formState[key],
-            });
-        }
-        dispatch(preferencesActions.savePreferences(options));
+        dispatch(preferencesActions.savePreferences(formState));
     };
 
     useEffect(() => {

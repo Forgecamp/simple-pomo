@@ -18,10 +18,13 @@ import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
 import * as timerActions from "../../shared/store/actions/timer";
+import * as taskActions from "../../shared/store/actions/tasks";
+import * as preferencesActions from "../../shared/store/actions/preferences";
 
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
+import firebase from "firebase";
 
 const TimerScreen = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -31,7 +34,6 @@ const TimerScreen = (props) => {
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
-    const loading = useSelector((state) => state.preferences.loading);
     const prefState = useSelector((state) => state.preferences);
     const autoContinue = prefState.options.autoContinue
         ? prefState.options.autoContinue.value
@@ -40,6 +42,18 @@ const TimerScreen = (props) => {
         ? prefState.options.useSound.value
         : 0;
     const isBreak = timerState.isBreak;
+
+    const uid = useSelector((state) => state.auth.uid);
+
+    useEffect(() => {
+        // The code that triggers loading existing tasks from internal DB/cloud
+        const loadHandler = async () => {
+            await dispatch(taskActions.loadTasks());
+            await dispatch(preferencesActions.loadPreferences());
+        };
+
+        loadHandler();
+    }, [uid]);
 
     useEffect(() => {
         Notifications.setNotificationHandler({
@@ -108,22 +122,17 @@ const TimerScreen = (props) => {
         setModalVisible((prev) => !prev);
     };
 
-    return loading ? (
-        <View style={styles.loadingScreen}>
-            <ActivityIndicator size="large" color={ColorsConstant.Notice} />
-        </View>
-    ) : (
+    // uid === null ? (
+    //     <View style={styles.loadingScreen}>
+    //         <ActivityIndicator size="large" color={ColorsConstant.Notice} />
+    //     </View>
+    // ) : (
+
+    return (
         <View style={styles.main}>
             <Timer
-                timerLength={
-                    timerState.isBreak
-                        ? timerState.breakLength
-                        : timerState.focusLength
-                }
-                timerKey={timerState.key}
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                isRunning={timerState.isRunning}
                 color={
                     timerState.isBreak
                         ? ColorsConstant.Success
@@ -133,7 +142,6 @@ const TimerScreen = (props) => {
                 onComplete={() => {
                     stopHandler(true);
                     if (autoContinue && !isBreak) {
-                        console.log(timerState.isRunning);
                         playPauseHandler(true);
                     }
                 }}

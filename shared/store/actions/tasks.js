@@ -7,21 +7,61 @@ export const DECREMENT_TASK = "DECREMENT_TASK";
 export const LOAD_TASKS = "LOAD_TASKS";
 export const SET_TASKS = "SET_TASKS";
 
+import Chance from "chance";
 import * as db from "../../helpers/db";
+import { firebase } from "../../helpers/firebase";
+
+const chance = new Chance();
+
+const generateId = (tasks) => {
+    const guid = chance.guid();
+    if (tasks.some((ele) => ele.id === guid)) {
+        generateId();
+    } else {
+        return guid;
+    }
+};
 
 export const addTask = (title) => {
     return async (dispatch) => {
-        const res = await db.addTask(title, 0);
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            const res = await db.addTask(title, 0);
 
-        dispatch({
-            type: ADD_TASK,
-            taskData: {
-                id: res.insertId,
-                title: title,
-            },
-        });
+            dispatch({
+                type: ADD_TASK,
+                taskData: {
+                    id: res.insertId,
+                    title: title,
+                },
+            });
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            const id = generateId(tasks);
+
+            await firestore
+                .collection("users")
+                .doc(uid)
+                .update({
+                    tasks: firebase.firestore.FieldValue.arrayUnion({
+                        id: id,
+                        title: title,
+                        count: 0,
+                    }),
+                });
+            dispatch({
+                type: ADD_TASK,
+                taskData: {
+                    id: id,
+                    title: title,
+                },
+            });
+        }
     };
 };
+
 export const removeTask = (taskId) => {
     return async (dispatch) => {
         await db.removeTask(taskId);
@@ -31,6 +71,7 @@ export const removeTask = (taskId) => {
         });
     };
 };
+
 export const completeTask = (isBreak, taskId, currentCount) => {
     return async (dispatch) => {
         currentCount > 0
@@ -79,12 +120,20 @@ export const decrementTask = (taskId, currentCount) => {
 
 export const loadTasks = () => {
     return async (dispatch) => {
-        try {
-            const dbResult = await db.fetchTasks();
-            dispatch({ type: SET_TASKS, tasks: [...dbResult.rows._array] });
-        } catch (err) {
-            console.log(err);
-            throw err;
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            try {
+                const dbResult = await db.fetchTasks();
+                dispatch({ type: SET_TASKS, tasks: [...dbResult.rows._array] });
+            } catch (err) {
+                console.log(err);
+                throw err;
+            }
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            dispatch({ type: SET_TASKS, tasks: tasks });
         }
     };
 };

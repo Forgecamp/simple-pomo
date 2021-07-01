@@ -1,48 +1,51 @@
-import React, {useEffect} from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
-// import { firebase } from "../../shared/helpers/firebase";
-import { AppNavigator, AuthNavigator } from '../AppNavigator';
-import * as ColorsConstant from '../../constants/Colors';
-import * as taskActions from "../../store/actions/tasks";
+import React, { useEffect } from "react";
+import { View, ActivityIndicator } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { NavigationContainer } from "@react-navigation/native";
+import { firebase } from "../../helpers/firebase";
+import { AppNavigator, AuthNavigator } from "../AppNavigator";
+import * as ColorsConstant from "../../constants/Colors";
 import * as preferencesActions from "../../store/actions/preferences";
+import * as authActions from "../../store/actions/auth";
+
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const StartUpNavigator = (props) => {
-    const dispatch = useDispatch();
     const prefs = useSelector((state) => state.preferences.options);
     const useCloud = prefs.cloudStorage?.value === 1 ? true : false;
-    const uid = useSelector((state) => state.auth.uid);
-    const loading = useSelector((state) => state.preferences.loading);
+    const dispatch = useDispatch();
+
+    const [user, loading, error] = useAuthState(firebase.auth());
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            dispatch(authActions.setUser(user));
+        }
+        if (!user) {
+            dispatch(authActions.setUser({ uid: undefined }));
+        }
+    });
 
     useEffect(() => {
-    // The code that triggers loading existing tasks from internal DB/cloud
-    const loadHandler = async () => {
-        if (loading) {
-            await dispatch(taskActions.loadTasks());
-            await dispatch(preferencesActions.loadPreferences());
-        }
-    };
-
-    loadHandler();
+        dispatch(preferencesActions.loadPreferences());
     }, [loading]);
 
-
     return loading ? (
-        <View style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-            width: "100%",
-        }}>
+        <View
+            style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                width: "100%",
+            }}
+        >
             <ActivityIndicator size="large" color={ColorsConstant.Notice} />
         </View>
     ) : (
         <NavigationContainer>
-            {uid && <AppNavigator />}
-            {!uid && useCloud && <AuthNavigator />}
-            {!uid && !useCloud && <AppNavigator />}
+            {useCloud && !user && <AuthNavigator />}
+            {(!useCloud || user) && <AppNavigator />}
         </NavigationContainer>
     );
 };

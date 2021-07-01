@@ -26,15 +26,19 @@ export default function (state = initialState, action) {
             return { ...state, loading: true };
         }
         case CLOUD_OPT_OUT: {
-            return { ...state, 
-                options: { ...state.options, "cloudStorage": {
-                    "desc": "Store tasks on the cloud:",
-                    "fullName": "Cloud Sync",
-                    "key": 6,
-                    "name": "cloudStorage",
-                    "value": 0,
-                } 
-            }}
+            return {
+                ...state,
+                options: {
+                    ...state.options,
+                    cloudStorage: {
+                        desc: "Store tasks on the cloud:",
+                        fullName: "Cloud Sync",
+                        key: 6,
+                        name: "cloudStorage",
+                        value: 0,
+                    },
+                },
+            };
         }
         default: {
             return state;

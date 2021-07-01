@@ -11,20 +11,17 @@ import * as ColorsConstant from "../../shared/constants/Colors";
 
 const StartupScreen = () => {
     const dispatch = useDispatch();
-    const loading = useSelector((state) => state.auth.loading);
-    firebase.auth().onAuthStateChanged((user) => {
-        dispatch(authActions.setUser(user));
-    });
-
     const handleAuth = (credential) => {
         dispatch(authActions.authenticate(credential));
     };
 
-    return loading ? (
-        <View style={styles.loadingScreen}>
-            <ActivityIndicator size="large" color={ColorsConstant.Notice} />
-        </View>
-    ) : (
+    // loading ? (
+    //         <View style={styles.loadingScreen}>
+    //             <ActivityIndicator size="large" color={ColorsConstant.Notice} />
+    //         </View>
+    //     ) : (
+
+    return (
         <View style={styles.loadingScreen}>
             <View style={styles.buttonContainer}>
                 <AppleButton authHandler={handleAuth} />

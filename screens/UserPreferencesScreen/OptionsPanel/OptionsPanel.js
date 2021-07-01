@@ -10,6 +10,7 @@ import { firebase } from "../../../shared/helpers/firebase";
 const OptionsPanel = (props) => {
     const options = useSelector((state) => state.preferences.options);
     const uid = useSelector((state) => state.auth.uid);
+    console.log(uid);
     const numericOptions = [
         options.defaultFocus,
         options.defaultShortBreak,

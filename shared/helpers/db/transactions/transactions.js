@@ -66,7 +66,7 @@ export const init = [
         INSERT INTO options (name, value, fullName, desc) 
         VALUES (
             "cloudStorage",
-            0,
+            1,
             "Cloud Sync",
             "Store tasks on the cloud:"
         );

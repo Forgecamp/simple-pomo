@@ -5,8 +5,9 @@ import {
     SET_USER_LOADED,
 } from "../actions/auth";
 const initialState = {
-    uid: null,
+    uid: undefined,
     loading: false,
+    attemptedLogin: false,
 };
 
 export default function (state = initialState, action) {
