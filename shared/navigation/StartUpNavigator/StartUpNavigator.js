@@ -22,7 +22,6 @@ const StartUpNavigator = (props) => {
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             dispatch(authActions.setUser(user));
-            console.log("yo");
         }
         if (!user) {
             dispatch(authActions.setUser({ uid: undefined }));

@@ -66,7 +66,24 @@ export const addTask = (title) => {
 
 export const removeTask = (taskId) => {
     return async (dispatch) => {
-        await db.removeTask(taskId);
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            await db.removeTask(taskId);
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            const relevantIndex = tasks.findIndex((task) => task.id === taskId);
+
+            await firestore
+                .collection("users")
+                .doc(uid)
+                .update({
+                    tasks: firebase.firestore.FieldValue.arrayRemove(
+                        tasks[relevantIndex]
+                    ),
+                });
+        }
         dispatch({
             type: REMOVE_TASK,
             taskId: taskId,
@@ -76,9 +93,33 @@ export const removeTask = (taskId) => {
 
 export const completeTask = (isBreak, taskId, currentCount) => {
     return async (dispatch) => {
-        currentCount > 0
-            ? db.decrementTask(taskId, currentCount)
-            : db.removeTask(taskId, currentCount);
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            currentCount > 0
+                ? db.decrementTask(taskId, currentCount)
+                : db.removeTask(taskId, currentCount);
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            const relevantIndex = tasks.findIndex((task) => task.id === taskId);
+
+            if (currentCount > 0) {
+                tasks[relevantIndex].count--;
+                await firestore.collection("users").doc(uid).update({
+                    tasks: tasks,
+                });
+            } else {
+                await firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({
+                        tasks: firebase.firestore.FieldValue.arrayRemove(
+                            tasks[relevantIndex]
+                        ),
+                    });
+            }
+        }
         dispatch({
             type: COMPLETE_TASK,
             isBreak: isBreak,
@@ -89,7 +130,20 @@ export const completeTask = (isBreak, taskId, currentCount) => {
 
 export const updateTask = (taskId, newTitle) => {
     return async (dispatch) => {
-        db.updateTask(taskId, newTitle);
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            db.updateTask(taskId, newTitle);
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            const relevantIndex = tasks.findIndex((task) => task.id === taskId);
+
+            tasks[relevantIndex].title = newTitle;
+            await firestore.collection("users").doc(uid).update({
+                tasks: tasks,
+            });
+        }
         dispatch({
             type: EDIT_TASK,
             taskData: {
@@ -102,7 +156,20 @@ export const updateTask = (taskId, newTitle) => {
 
 export const incrementTask = (taskId, currentCount) => {
     return async (dispatch) => {
-        db.incrementTask(taskId, currentCount);
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            db.incrementTask(taskId, currentCount);
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            const relevantIndex = tasks.findIndex((task) => task.id === taskId);
+
+            tasks[relevantIndex].count++;
+            await firestore.collection("users").doc(uid).update({
+                tasks: tasks,
+            });
+        }
         dispatch({
             type: INCREMENT_TASK,
             taskId: taskId,
@@ -112,7 +179,20 @@ export const incrementTask = (taskId, currentCount) => {
 
 export const decrementTask = (taskId, currentCount) => {
     return async (dispatch) => {
-        db.decrementTask(taskId, currentCount);
+        const uid = await firebase.auth().currentUser?.uid;
+        if (uid === undefined) {
+            db.decrementTask(taskId, currentCount);
+        } else {
+            const firestore = firebase.firestore();
+            const doc = await firestore.collection("users").doc(uid).get();
+            const tasks = doc.data().tasks;
+            const relevantIndex = tasks.findIndex((task) => task.id === taskId);
+
+            tasks[relevantIndex].count--;
+            await firestore.collection("users").doc(uid).update({
+                tasks: tasks,
+            });
+        }
         dispatch({
             type: DECREMENT_TASK,
             taskId: taskId,
