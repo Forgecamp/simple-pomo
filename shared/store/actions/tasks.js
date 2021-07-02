@@ -93,31 +93,35 @@ export const removeTask = (taskId) => {
 
 export const completeTask = (isBreak, taskId, currentCount) => {
     return async (dispatch) => {
-        const uid = await firebase.auth().currentUser?.uid;
-        if (uid === undefined) {
-            currentCount > 0
-                ? db.decrementTask(taskId, currentCount)
-                : db.removeTask(taskId, currentCount);
-        } else {
-            const firestore = firebase.firestore();
-            const doc = await firestore.collection("users").doc(uid).get();
-            const tasks = doc.data().tasks;
-            const relevantIndex = tasks.findIndex((task) => task.id === taskId);
-
-            if (currentCount > 0) {
-                tasks[relevantIndex].count--;
-                await firestore.collection("users").doc(uid).update({
-                    tasks: tasks,
-                });
+        if (!isBreak && taskId.length) {
+            const uid = await firebase.auth().currentUser?.uid;
+            if (uid === undefined) {
+                currentCount > 0
+                    ? db.decrementTask(taskId, currentCount)
+                    : db.removeTask(taskId, currentCount);
             } else {
-                await firestore
-                    .collection("users")
-                    .doc(uid)
-                    .update({
-                        tasks: firebase.firestore.FieldValue.arrayRemove(
-                            tasks[relevantIndex]
-                        ),
+                const firestore = firebase.firestore();
+                const doc = await firestore.collection("users").doc(uid).get();
+                const tasks = doc.data().tasks;
+                const relevantIndex = tasks.findIndex(
+                    (task) => task.id === taskId
+                );
+
+                if (currentCount > 0) {
+                    tasks[relevantIndex].count--;
+                    await firestore.collection("users").doc(uid).update({
+                        tasks: tasks,
                     });
+                } else {
+                    await firestore
+                        .collection("users")
+                        .doc(uid)
+                        .update({
+                            tasks: firebase.firestore.FieldValue.arrayRemove(
+                                tasks[relevantIndex]
+                            ),
+                        });
+                }
             }
         }
         dispatch({
