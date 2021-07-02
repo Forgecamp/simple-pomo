@@ -6,10 +6,12 @@ import {
     INCREMENT_TASK,
     DECREMENT_TASK,
     SET_TASKS,
+    SET_TASKS_LOADING,
+    SET_TASKS_LOADED,
 } from "../actions/tasks";
 import Task from "../../models/task";
 // import dummyData from "../../dummyData";
-const initialState = { tasks: [] };
+const initialState = { tasks: [], loading: false };
 
 export default function (state = initialState, action) {
     switch (action.type) {
@@ -78,6 +80,12 @@ export default function (state = initialState, action) {
         }
         case SET_TASKS: {
             return { ...state, tasks: [...action.tasks] };
+        }
+        case SET_TASKS_LOADING: {
+            return { ...state, loading: true };
+        }
+        case SET_TASKS_LOADED: {
+            return { ...state, loading: false };
         }
         default: {
             return state;

@@ -7,6 +7,7 @@ import { AppNavigator, AuthNavigator } from "../AppNavigator";
 import * as ColorsConstant from "../../constants/Colors";
 import * as preferencesActions from "../../store/actions/preferences";
 import * as authActions from "../../store/actions/auth";
+import * as taskActions from "../../store/actions/tasks";
 
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -15,11 +16,13 @@ const StartUpNavigator = (props) => {
     const useCloud = prefs.cloudStorage?.value === 1 ? true : false;
     const dispatch = useDispatch();
 
+    const uid = useSelector((state) => state.auth.uid);
     const [user, loading, error] = useAuthState(firebase.auth());
 
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             dispatch(authActions.setUser(user));
+            console.log("yo");
         }
         if (!user) {
             dispatch(authActions.setUser({ uid: undefined }));
@@ -27,8 +30,11 @@ const StartUpNavigator = (props) => {
     });
 
     useEffect(() => {
+        // The code that triggers loading existing tasks from internal DB/cloud
+        dispatch(taskActions.setTasksLoading());
+        dispatch(taskActions.loadTasks());
         dispatch(preferencesActions.loadPreferences());
-    }, [loading]);
+    }, [uid]);
 
     return loading ? (
         <View

@@ -6,6 +6,8 @@ export const INCREMENT_TASK = "INCREMENT_TASK";
 export const DECREMENT_TASK = "DECREMENT_TASK";
 export const LOAD_TASKS = "LOAD_TASKS";
 export const SET_TASKS = "SET_TASKS";
+export const SET_TASKS_LOADING = "SET_TASKS_LOADING";
+export const SET_TASKS_LOADED = "SET_TASKS_LOADED";
 
 import Chance from "chance";
 import * as db from "../../helpers/db";
@@ -125,6 +127,7 @@ export const loadTasks = () => {
             try {
                 const dbResult = await db.fetchTasks();
                 dispatch({ type: SET_TASKS, tasks: [...dbResult.rows._array] });
+                dispatch(setTasksLoaded());
             } catch (err) {
                 console.log(err);
                 throw err;
@@ -134,6 +137,15 @@ export const loadTasks = () => {
             const doc = await firestore.collection("users").doc(uid).get();
             const tasks = doc.data().tasks;
             dispatch({ type: SET_TASKS, tasks: tasks });
+            dispatch(setTasksLoaded());
         }
     };
+};
+
+export const setTasksLoading = () => {
+    return { type: SET_TASKS_LOADING };
+};
+
+export const setTasksLoaded = () => {
+    return { type: SET_TASKS_LOADED };
 };

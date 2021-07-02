@@ -24,13 +24,13 @@ import * as preferencesActions from "../../shared/store/actions/preferences";
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
-import firebase from "firebase";
 
 const TimerScreen = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
     const dispatch = useDispatch();
     const timerState = useSelector((state) => state.timer);
     const taskList = useSelector((state) => state.tasks.tasks);
+    const loading = useSelector((state) => state.tasks.loading);
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
@@ -42,18 +42,6 @@ const TimerScreen = (props) => {
         ? prefState.options.useSound.value
         : 0;
     const isBreak = timerState.isBreak;
-
-    const uid = useSelector((state) => state.auth.uid);
-
-    useEffect(() => {
-        // The code that triggers loading existing tasks from internal DB/cloud
-        const loadHandler = async () => {
-            await dispatch(taskActions.loadTasks());
-            await dispatch(preferencesActions.loadPreferences());
-        };
-
-        loadHandler();
-    }, [uid]);
 
     useEffect(() => {
         Notifications.setNotificationHandler({
@@ -122,13 +110,11 @@ const TimerScreen = (props) => {
         setModalVisible((prev) => !prev);
     };
 
-    // uid === null ? (
-    //     <View style={styles.loadingScreen}>
-    //         <ActivityIndicator size="large" color={ColorsConstant.Notice} />
-    //     </View>
-    // ) : (
-
-    return (
+    return loading ? (
+        <View style={styles.loadingScreen}>
+            <ActivityIndicator size="large" color={ColorsConstant.Notice} />
+        </View>
+    ) : (
         <View style={styles.main}>
             <Timer
                 resetTimerHandler={resetTimerHandler}
