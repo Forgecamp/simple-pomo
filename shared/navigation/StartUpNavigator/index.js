@@ -1,1 +1,1 @@
-export { StartUpNavigator } from "./StartUpNavigator";
+export { default } from "./StartUpNavigator";

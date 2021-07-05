@@ -1,15 +1,17 @@
+// eslint-disable-next-line no-unused-vars
 // Core/First Party
 import React, { useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
     ActivityIndicator,
-    Button,
     Platform,
+    SafeAreaView,
+    ScrollView,
 } from "react-native";
-// eslint-disable-next-line no-unused-vars
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
+import { firebase } from "../../shared/helpers/firebase";
 // Third Party Packages
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../../shared/components/UI/HeaderButton";
@@ -34,15 +36,7 @@ const UserPreferencesScreen = (props) => {
     });
 
     const submitHandler = () => {
-        const options = [];
-
-        for (const key of Object.keys(formState)) {
-            options.push({
-                name: key,
-                value: formState[key],
-            });
-        }
-        dispatch(preferencesActions.savePreferences(options));
+        dispatch(preferencesActions.savePreferences(formState));
     };
 
     useEffect(() => {
@@ -76,19 +70,7 @@ const UserPreferencesScreen = (props) => {
             <ActivityIndicator size="large" color={ColorConstants.Notice} />
         </View>
     ) : (
-        <View style={styles.screen}>
-            <OptionsPanel prefState={prefState} setFormState={setFormState} />
-            <View style={styles.section}>
-                <View style={styles.logoutContainer}>
-                    <Button
-                        title="Logout"
-                        titleStyle={styles.logoutButton}
-                        color={ColorConstants.Caution}
-                    />
-                </View>
-            </View>
-        </View>
-        // </ScrollView>
+        <OptionsPanel prefState={prefState} setFormState={setFormState} />
     );
 };
 
@@ -99,49 +81,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         height: "100%",
         width: "100%",
-    },
-    screen: {
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-    },
-    section: {
-        marginBottom: 10,
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
-        width: "100%",
-        padding: "7.5%",
-    },
-    header: {
-        fontWeight: "bold",
-        fontSize: 18,
-        lineHeight: 30,
-    },
-    subHeader: {
-        fontSize: 16,
-        paddingLeft: 5,
-    },
-    logoutContainer: {
-        width: "100%",
-    },
-    logoutButton: {
-        fontWeight: "bold",
-    },
-    control: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    desc: {
-        width: "80%",
-    },
-    input: {
-        borderColor: "black",
-        borderWidth: 1,
-        width: "20%",
-        paddingVertical: 1,
-        paddingHorizontal: 5,
     },
 });
 

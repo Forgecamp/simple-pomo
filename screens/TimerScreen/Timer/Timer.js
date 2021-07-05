@@ -15,6 +15,8 @@ import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 // Additional Modules/Components
 // Constants
 
+import { LogBox } from "react-native";
+
 const Timer = (props) => {
     const timerState = useSelector((state) => state.timer);
     return (

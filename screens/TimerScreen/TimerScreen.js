@@ -20,6 +20,7 @@ import ControlBar from "./ControlBar";
 import * as timerActions from "../../shared/store/actions/timer";
 import * as taskActions from "../../shared/store/actions/tasks";
 import * as preferencesActions from "../../shared/store/actions/preferences";
+
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
@@ -29,10 +30,10 @@ const TimerScreen = (props) => {
     const dispatch = useDispatch();
     const timerState = useSelector((state) => state.timer);
     const taskList = useSelector((state) => state.tasks.tasks);
+    const loading = useSelector((state) => state.tasks.loading);
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
-    const loading = useSelector((state) => state.preferences.loading);
     const prefState = useSelector((state) => state.preferences);
     const autoContinue = prefState.options.autoContinue
         ? prefState.options.autoContinue.value
@@ -50,18 +51,6 @@ const TimerScreen = (props) => {
             }),
         });
     }, [useSound]);
-
-    useEffect(() => {
-        // The code that triggers loading existing tasks from internal DB/cloud
-        const loadHandler = async () => {
-            if (loading) {
-                await dispatch(taskActions.loadTasks());
-                await dispatch(preferencesActions.loadPreferences());
-            }
-        };
-
-        loadHandler();
-    }, [loading]);
 
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
@@ -128,15 +117,8 @@ const TimerScreen = (props) => {
     ) : (
         <View style={styles.main}>
             <Timer
-                timerLength={
-                    timerState.isBreak
-                        ? timerState.breakLength
-                        : timerState.focusLength
-                }
-                timerKey={timerState.key}
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                isRunning={timerState.isRunning}
                 color={
                     timerState.isBreak
                         ? ColorsConstant.Success
@@ -146,7 +128,6 @@ const TimerScreen = (props) => {
                 onComplete={() => {
                     stopHandler(true);
                     if (autoContinue && !isBreak) {
-                        console.log(timerState.isRunning);
                         playPauseHandler(true);
                     }
                 }}

@@ -1,52 +1,91 @@
 export const APPLY_PREFERENCES = "APPLY_PREFERENCES";
 export const SET_HAS_LOADED = "SET_HAS_LOADED";
 export const SET_IS_LOADING = "SET_IS_LOADING";
-
-import { RESET } from "./timer";
+export const CLOUD_OPT_OUT = "CLOUD_OPT_OUT";
 
 import * as db from "../../helpers/db";
+import { firebase } from "../../helpers/firebase";
 
 export const loadPreferences = () => {
     return async (dispatch) => {
-        const dbResult = await db.fetchOptions();
-        const parsedResults = await dbResult.rows["_array"];
-        const options = {};
+        try {
+            const uid = await firebase.auth().currentUser?.uid;
+            const dbResult = await db.fetchOptions();
+            const parsedResults = await dbResult.rows["_array"];
+            let options = {};
 
-        for (const option of parsedResults) {
-            options[option.name] = {
-                name: option.name,
-                value: option.value,
-                key: option.id,
-                fullName: option.fullName,
-                desc: option.desc,
-            };
+            for (const option of parsedResults) {
+                options[option.name] = {
+                    name: option.name,
+                    value: option.value,
+                    key: option.id,
+                    fullName: option.fullName,
+                    desc: option.desc,
+                };
+            }
+            if (uid !== undefined) {
+                const firestore = firebase.firestore();
+                const record = await firestore
+                    .collection("users")
+                    .doc(uid)
+                    .get();
+                let cloudOptions = await record.data().options;
+                if (Object.keys(cloudOptions).length === 0) {
+                    await firestore
+                        .collection("users")
+                        .doc(uid)
+                        .update({ options: options });
+                } else {
+                    options = { ...cloudOptions };
+                }
+            }
+            dispatch({
+                type: APPLY_PREFERENCES,
+                options: options,
+            });
+
+            dispatch({ type: SET_HAS_LOADED });
+        } catch (error) {
+            console.log(error);
         }
-
-        dispatch({
-            type: APPLY_PREFERENCES,
-            options: options,
-        });
-
-        dispatch({ type: SET_HAS_LOADED });
     };
 };
 
 export const savePreferences = (options) => {
     return async (dispatch) => {
-        const parsedOptions = {};
-        for (const option of options) {
-            await db.updateOption(option.name, option.value.value);
-            parsedOptions[option.name] = {
-                name: option.name,
-                value: option.value.value,
-                key: option.value.id,
-                fullName: option.value.fullName,
-                desc: option.value.desc,
-            };
+        try {
+            const uid = await firebase.auth().currentUser?.uid;
+            const firestore = firebase.firestore();
+
+            if (uid === undefined) {
+                for (const key of Object.keys(options)) {
+                    await db.updateOption(
+                        options[key].name,
+                        options[key].value
+                    );
+                }
+            } else {
+                await firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({ options: options });
+            }
+
+            dispatch({
+                type: APPLY_PREFERENCES,
+                options: options,
+            });
+        } catch (error) {
+            console.log(error);
         }
+    };
+};
+
+export const cloudOptOut = () => {
+    return async (dispatch) => {
+        await db.updateOption("cloudStorage", 0);
         dispatch({
-            type: APPLY_PREFERENCES,
-            options: parsedOptions,
+            type: CLOUD_OPT_OUT,
         });
     };
 };
