@@ -1,6 +1,7 @@
 // Core/First Party
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform } from "react-native";
+import * as Linking from "expo-linking";
 // Third Party Packages
 // Additional Modules/Components
 import MenuButton from "../../shared/components/UI/MenuButton";
@@ -13,17 +14,38 @@ const AboutScreen = () => {
                 <Text style={styles.title}>Simple Pomo</Text>
                 <Text style={styles.subtitle}>v0.0.1</Text>
             </View>
+            {/* The order of these things will probably get rearranged */}
             <View style={styles.section}>
-                <Text style={styles.header}>Rate: </Text>
-                <Text style={styles.subHeader}>Lorem ipsum</Text>
+                {/* This is probably just going to be an OS-specific direct app store link */}
+                <Text style={styles.header}>
+                    Rate Simple Pomo on{" "}
+                    {Platform.OS === "ios" ? "the App Store" : "Google Play"}!
+                </Text>
+                {/* <Text style={styles.subHeader}>Lorem ipsum</Text> */}
             </View>
             <View style={styles.section}>
+                {/* A mailto to my Forgecamp Dev email */}
                 <Text style={styles.header}>Feedback: </Text>
-                <Text style={styles.subHeader}>Lorem ipsum</Text>
+                <View>
+                    <Text
+                        style={{
+                            ...styles.subHeader,
+                            color: "blue",
+                            textDecorationLine: "underline",
+                            textDecorationStyle: "solid",
+                        }}
+                        onPress={() => {
+                            Linking.openURL("mailto:forgecampdev@gmail.com");
+                        }}
+                    >
+                        Click here to email the developer
+                    </Text>
+                </View>
             </View>
             <View style={styles.section}>
+                {/* A button that opens a modal browser window to my Ko-Fi page */}
                 <Text style={styles.header}>Support the Developer: </Text>
-                <Text style={styles.subHeader}>Lorem ipsum</Text>
+                <Text style={styles.subHeader}>Buy me a coffee on Ko-fi!</Text>
             </View>
         </View>
     );
