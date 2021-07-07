@@ -1,37 +1,37 @@
 {
-  "expo": {
-    "name": "simple-pomo",
-    "slug": "simple-pomo",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "usesAppleSignIn": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "ANDROID_KEY": "435636724308-dfikr32hbhg75kguu4sm4jeq82ose89m.apps.googleusercontent.com",
-      "EXPO_CLIENT": "435636724308-87pbk73f9v2f1aonejqddm858al3lafj.apps.googleusercontent.com"
+    "expo": {
+        "name": "simple-pomo",
+        "slug": "simple-pomo",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "bundleIdentifier": "forgecamp.net.simplepomo",
+            "supportsTablet": true,
+            "usesAppleSignIn": true
+        },
+        "android": {
+            "package": "com.forgecamp.simplepomo",
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#FFFFFF"
+            }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "extra": {
+            "ANDROID_KEY": "435636724308-dfikr32hbhg75kguu4sm4jeq82ose89m.apps.googleusercontent.com",
+            "EXPO_CLIENT": "435636724308-87pbk73f9v2f1aonejqddm858al3lafj.apps.googleusercontent.com"
+        }
     }
-  }
 }
