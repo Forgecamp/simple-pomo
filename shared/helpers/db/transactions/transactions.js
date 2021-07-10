@@ -59,7 +59,7 @@ export const init = [
             "useSound",
             1,
             "Sound",
-            "Enable sound while Simple Pomo is active: "
+            "Enable sound while app is active: "
         );
     `,
     `

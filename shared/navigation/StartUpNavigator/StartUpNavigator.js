@@ -24,6 +24,7 @@ const StartUpNavigator = (props) => {
             dispatch(authActions.setUser(user));
         }
         if (!user) {
+            console.log("logout");
             dispatch(authActions.setUser({ uid: undefined }));
         }
     });

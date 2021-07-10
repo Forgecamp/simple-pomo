@@ -54,9 +54,7 @@ const UserPreferencesScreen = (props) => {
                             }
                             onPress={submitHandler}
                             color={
-                                Platform.OS === "android"
-                                    ? "white"
-                                    : ColorConstants.Notice
+                                Platform.OS === "android" ? "white" : "black"
                             }
                         />
                     </HeaderButtons>
