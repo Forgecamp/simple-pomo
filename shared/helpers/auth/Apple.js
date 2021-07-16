@@ -39,7 +39,7 @@ const Apple = (props) => {
                     AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
                 }
                 cornerRadius={5}
-                style={{ width: 250, height: 50 }}
+                style={{ width: 290, height: 60 }}
                 onPress={loginWithApple}
             />
         </View>

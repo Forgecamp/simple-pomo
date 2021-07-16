@@ -106,8 +106,6 @@ const styles = StyleSheet.create({
     },
     cloudOptOutButton: {
         width: "100%",
-        borderColor: "grey",
-        borderWidth: 1,
         height: 50,
         alignItems: "center",
         justifyContent: "center",
