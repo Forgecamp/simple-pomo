@@ -9,6 +9,7 @@ import {
     SafeAreaView,
     ScrollView,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/core";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { firebase } from "../../shared/helpers/firebase";
@@ -27,12 +28,12 @@ const UserPreferencesScreen = (props) => {
     const loading = useSelector((state) => state.preferences.loading);
 
     const [formState, setFormState] = useState({
-        defaultFocus: prefState.options.defaultFocus,
-        defaultShortBreak: prefState.options.defaultShortBreak,
-        defaultLongBreak: prefState.options.defaultLongBreak,
-        autoContinue: prefState.options.autoContinue,
-        useSound: prefState.options.useSound,
-        cloudStorage: prefState.options.cloudStorage,
+        defaultFocus: { ...prefState.options.defaultFocus },
+        defaultShortBreak: { ...prefState.options.defaultShortBreak },
+        defaultLongBreak: { ...prefState.options.defaultLongBreak },
+        autoContinue: { ...prefState.options.autoContinue },
+        useSound: { ...prefState.options.useSound },
+        cloudStorage: { ...prefState.options.cloudStorage },
     });
 
     const submitHandler = () => {

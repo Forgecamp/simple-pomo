@@ -1,11 +1,27 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useIsFocused } from "@react-navigation/core";
+import { useSelector } from "react-redux";
 import { Text, View, TextInput, StyleSheet } from "react-native";
 
 const NumericInput = (props) => {
+    const isFocused = useIsFocused();
+    const [formInput, setFormInput] = useState(
+        (props.item.value / 60).toString()
+    );
+    const initialValue = useSelector((state) =>
+        (state.preferences.options[props.item.name].value / 60).toString()
+    );
+
+    useEffect(() => {
+        textChangeHandler(initialValue);
+    }, [isFocused]);
+
     const textChangeHandler = (text) => {
+        let validatedText = text.replace(/[^0-9]/g, "");
+        setFormInput(validatedText);
         props.setFormState((prev) => {
-            prev[props.item.name].value = parseInt(text) * 60;
+            prev[props.item.name].value = parseInt(validatedText) * 60;
             return prev;
         });
     };
@@ -22,8 +38,13 @@ const NumericInput = (props) => {
                         textAlign={"center"}
                         numeric
                         keyboardType={"numeric"}
-                        placeholder={(props.item.value / 60).toString()}
                         onChangeText={textChangeHandler}
+                        value={formInput}
+                        onBlur={() => {
+                            if (!formInput || formInput < 1) {
+                                textChangeHandler(initialValue);
+                            }
+                        }}
                     />
                 </View>
             </View>
@@ -32,20 +53,14 @@ const NumericInput = (props) => {
 };
 
 const styles = StyleSheet.create({
-    screen: {
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-    },
     section: {
         width: "100%",
-        paddingHorizontal: "7.5%",
-        paddingVertical: "5%",
+        paddingHorizontal: 15,
+        paddingVertical: 15,
     },
     header: {
         fontWeight: "bold",
-        fontSize: 18,
-        lineHeight: 30,
+        fontSize: 17,
     },
     subHeader: {
         fontSize: 16,
@@ -60,11 +75,12 @@ const styles = StyleSheet.create({
     control: {
         width: "100%",
         flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        justifyContent: "space-around",
+        alignItems: "flex-end",
     },
     desc: {
         width: "80%",
+        paddingRight: 20,
     },
     input: {
         borderBottomColor: "black",

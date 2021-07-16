@@ -42,19 +42,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         width: "100%",
     },
-    section: {
-        marginBottom: 10,
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
-        width: "100%",
-        padding: "7.5%",
-    },
-    logoutContainer: {
-        width: "100%",
-    },
-    logoutButton: {
-        fontWeight: "bold",
-    },
 });
 
 export default OptionsPanel;

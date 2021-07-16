@@ -81,7 +81,7 @@ export const AuthNavigator = () => {
         <AuthStackNavigator.Navigator screenOptions={defaultScreenOptions}>
             <AuthStackNavigator.Screen
                 component={AuthScreen}
-                name="Authentication"
+                name="Simple Pomo"
                 options={{
                     headerLeft: null,
                 }}

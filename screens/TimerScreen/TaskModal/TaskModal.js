@@ -8,6 +8,7 @@ import {
     TextInput,
     Button,
     Alert,
+    KeyboardAvoidingView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -30,7 +31,7 @@ const TaskModal = (props) => {
         }
     };
     return (
-        <View style={styles.modal}>
+        <KeyboardAvoidingView style={styles.modal}>
             <View style={styles.closeButton}>
                 <TouchableOpacity onPress={props.modalHandler}>
                     <Ionicons
@@ -64,7 +65,7 @@ const TaskModal = (props) => {
                     />
                 </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

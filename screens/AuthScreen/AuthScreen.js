@@ -1,9 +1,14 @@
 import React from "react";
-import { View, StyleSheet, Button, ActivityIndicator } from "react-native";
-import { firebase } from "../../shared/helpers/firebase";
+import {
+    View,
+    StyleSheet,
+    TouchableOpacity,
+    Text,
+    Platform,
+} from "react-native";
 import GoogleButton from "../../shared/helpers/auth/Google";
 import AppleButton from "../../shared/helpers/auth/Apple";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as authActions from "../../shared/store/actions/auth";
 import * as preferencesActions from "../../shared/store/actions/preferences";
 import ExpoConstants from "expo-constants";
@@ -15,36 +20,51 @@ const StartupScreen = () => {
         dispatch(authActions.authenticate(credential));
     };
 
-    // loading ? (
-    //         <View style={styles.loadingScreen}>
-    //             <ActivityIndicator size="large" color={ColorsConstant.Notice} />
-    //         </View>
-    //     ) : (
-
     return (
-        <View style={styles.loadingScreen}>
-            <View style={styles.buttonContainer}>
-                <AppleButton authHandler={handleAuth} />
+        <View style={styles.authScreen}>
+            <View style={styles.splash}>
+                <View style={styles.headline}>
+                    <Text style={styles.headlineText}>
+                        Thanks for using Simple Pomo!
+                    </Text>
+                </View>
+                <View style={styles.subhead}>
+                    <Text style={styles.subheadText}>
+                        Please consider signing in securely for cloud storage of
+                        your tasks and options.
+                    </Text>
+                </View>
             </View>
-            <View style={styles.buttonContainer}>
-                <GoogleButton authHandler={handleAuth} />
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button
-                    title="Proceed Offline"
-                    onPress={() => {
-                        dispatch(preferencesActions.cloudOptOut());
-                    }}
-                />
+            <View>
+                <View style={styles.buttonContainer}>
+                    <AppleButton authHandler={handleAuth} />
+                </View>
+                <View style={styles.buttonContainer}>
+                    <GoogleButton authHandler={handleAuth} />
+                </View>
+                <View style={styles.buttonContainer}>
+                    <View style={styles.cloudOptOutContainer}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                dispatch(preferencesActions.cloudOptOut());
+                            }}
+                            style={styles.cloudOptOutButton}
+                        >
+                            <Text style={styles.cloudOptOutText}>
+                                Proceed Offline
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    loadingScreen: {
+    authScreen: {
         flex: 1,
-        justifyContent: "center",
+        justifyContent: "space-around",
         alignItems: "center",
         height: "100%",
         width: "100%",
@@ -77,6 +97,43 @@ const styles = StyleSheet.create({
     },
     label: {
         paddingBottom: 3,
+    },
+    cloudOptOutContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        width: 300,
+        paddingHorizontal: 5,
+    },
+    cloudOptOutButton: {
+        width: "100%",
+        borderColor: "grey",
+        borderWidth: 1,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+        backgroundColor:
+            Platform.OS === "ios" ? "white" : ColorsConstant.Notice,
+    },
+    cloudOptOutText: {
+        fontSize: 16,
+        color: Platform.OS === "ios" ? ColorsConstant.Notice : "white",
+    },
+    splash: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginHorizontal: 30,
+    },
+    headline: {
+        marginBottom: 10,
+    },
+    headlineText: {
+        fontSize: 22,
+        textAlign: "justify",
+    },
+    subheadText: {
+        fontSize: 16,
+        textAlign: "justify",
     },
 });
 

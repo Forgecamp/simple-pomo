@@ -44,15 +44,10 @@ const BinaryOption = (props) => {
 };
 
 const styles = StyleSheet.create({
-    screen: {
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-    },
     section: {
         width: "100%",
-        paddingHorizontal: "7.5%",
-        paddingVertical: "5%",
+        paddingHorizontal: 15,
+        paddingVertical: 15,
     },
     header: {
         fontWeight: "bold",
@@ -77,6 +72,7 @@ const styles = StyleSheet.create({
     },
     desc: {
         width: "80%",
+        paddingRight: 20,
     },
     input: {
         width: "20%",

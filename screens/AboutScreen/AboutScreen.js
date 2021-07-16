@@ -1,6 +1,7 @@
 // Core/First Party
-import React, { useState } from "react";
+import React from "react";
 import {
+    ScrollView,
     View,
     StyleSheet,
     Text,
@@ -15,6 +16,7 @@ import * as WebBrowser from "expo-web-browser";
 import MenuButton from "../../shared/components/UI/MenuButton";
 import icon from "../../assets/kofi-stroke.png";
 // Constants
+import * as ColorsConstant from "../../shared/constants/Colors";
 
 const AboutScreen = () => {
     const handleRateApp = async () => {
@@ -30,69 +32,93 @@ const AboutScreen = () => {
     };
 
     return (
-        <View style={styles.screen}>
-            <View style={styles.headline}>
-                <Text style={styles.title}>Simple Pomo</Text>
-                <Text style={styles.subtitle}>v0.0.1</Text>
-            </View>
-            {/* The order of these things will probably get rearranged */}
-            <View style={styles.section}>
-                {/* This is probably just going to be an OS-specific direct app store link */}
-                <Text style={styles.header} onPress={handleRateApp}>
-                    Rate Simple Pomo on{" "}
-                    {Platform.OS === "ios"
-                        ? "the App Store"
-                        : "Google Play store"}
-                    !
-                </Text>
-                {/* <Text style={styles.subHeader}>Lorem ipsum</Text> */}
-            </View>
-            <View style={styles.section}>
-                {/* A mailto to my Forgecamp Dev email */}
-                <Text style={styles.header}>Feedback: </Text>
-                <View>
-                    <Text
-                        style={{
-                            ...styles.subHeader,
-                            color: "blue",
-                            textDecorationLine: "underline",
-                            textDecorationStyle: "solid",
-                        }}
-                        onPress={() => {
-                            Linking.openURL("mailto:forgecampdev@gmail.com");
-                        }}
-                    >
-                        Click here to email the developer
-                    </Text>
+        <ScrollView>
+            <View style={styles.screen}>
+                <View style={styles.info}>
+                    <View style={styles.headline}>
+                        <Text style={styles.title}>Simple Pomo</Text>
+                        <Text style={styles.subtitle}>
+                            by D. Williams; v0.0.1
+                        </Text>
+                    </View>
+                    <View style={styles.section}>
+                        <Text style={styles.header}>Privacy Policy: </Text>
+                        <Text style={styles.subHeader}>
+                            We will never sell or distribute your email address,
+                            or any other information acquired from or related to
+                            the use of this program, for any reason.
+                        </Text>
+                    </View>
+                </View>
+                <View style={styles.buttons}>
+                    <View style={styles.section}>
+                        {/* This is probably just going to be an OS-specific direct app store link */}
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.customButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={handleRateApp}
+                                    style={styles.customButton}
+                                >
+                                    <Text style={styles.customButtonText}>
+                                        Rate & Review Simple Pomo
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.section}>
+                        {/* A mailto to my Forgecamp Dev email */}
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.customButtonContainer}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        Linking.openURL(
+                                            "mailto:forgecampdev@gmail.com"
+                                        );
+                                    }}
+                                    style={styles.customButton}
+                                >
+                                    <Text style={styles.customButtonText}>
+                                        Email the Developer
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.section}>
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.customButtonContainer}>
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={handleDonate}
+                                >
+                                    <Image style={styles.kofi} source={icon} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
                 </View>
             </View>
-            <View style={styles.section}>
-                {/* A button that opens a modal browser window to my Ko-Fi page */}
-                <Text style={styles.header}>Support the Developer: </Text>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleDonate}
-                    >
-                        <Image style={styles.kofi} source={icon} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     screen: {
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
         width: "100%",
+        height: "100%",
+    },
+    info: {
+        width: "100%",
+        marginBottom: 60,
     },
     headline: {
         alignItems: "center",
         width: "100%",
-        marginTop: 50,
-        marginBottom: 50,
+        marginTop: 25,
+        marginBottom: 35,
     },
     title: {
         fontSize: 30,
@@ -101,31 +127,53 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     section: {
-        marginBottom: 20,
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
+        marginBottom: 10,
+        alignItems: "center",
+        justifyContent: "center",
         width: "100%",
-        padding: "7.5%",
+        paddingHorizontal: "7.5%",
+    },
+    buttons: {
+        width: "100%",
     },
     header: {
         fontWeight: "bold",
         fontSize: 18,
         lineHeight: 30,
+        textAlign: "left",
+        width: "100%",
     },
     subHeader: {
         fontSize: 16,
         paddingLeft: 5,
     },
     kofi: {
-        height: 50,
-        width: 300,
+        height: 59,
+        // width: "100%",
         resizeMode: "contain",
     },
     buttonContainer: {
         width: "100%",
+    },
+    customButtonContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+    },
+    customButton: {
+        width: "100%",
+        borderColor: "grey",
+        borderWidth: 1,
+        height: 50,
         alignItems: "center",
         justifyContent: "center",
-        padding: 15,
+        borderRadius: 5,
+        backgroundColor:
+            Platform.OS === "ios" ? "white" : ColorsConstant.Notice,
+    },
+    customButtonText: {
+        fontSize: 16,
+        color: Platform.OS === "ios" ? ColorsConstant.Notice : "white",
     },
 });
 
