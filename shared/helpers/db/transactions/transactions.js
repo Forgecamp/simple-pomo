@@ -22,7 +22,7 @@ export const init = [
             "defaultFocus",
             1500,
             "Focus Period Length",
-            "In minutes:"
+            "The length of each period of activity, in minutes."
         );
         
     `,
@@ -32,7 +32,7 @@ export const init = [
             "defaultShortBreak",
             300,
             "Short Break Length",
-            "In minutes:"
+            "The duration of breaks after the 1st, 2nd, and 3rd focus periods, in minutes."
         );
     `,
     `
@@ -41,7 +41,7 @@ export const init = [
             "defaultLongBreak",
             900,
             "Long Break Length",
-            "In minutes:"
+            "The length of every fourth break, which should be longer than the short breaks."
         );
     `,
     `
@@ -50,7 +50,7 @@ export const init = [
             "autoContinue",
             0,
             "Begin Breaks Automatically",
-            "Start breaks without prompting:"
+            "Breaks begin immediately after focus periods, without user input."
         );
     `,
     `
@@ -59,7 +59,7 @@ export const init = [
             "useSound",
             1,
             "Sound",
-            "Enable sound while Simple Pomo is active: "
+            "Enable sound while Simple Pomo is active in the foreground."
         );
     `,
     `
@@ -68,7 +68,7 @@ export const init = [
             "cloudStorage",
             1,
             "Cloud Sync",
-            "Store tasks on the cloud:"
+            "Store your tasks and settings in the cloud."
         );
     `,
 ];

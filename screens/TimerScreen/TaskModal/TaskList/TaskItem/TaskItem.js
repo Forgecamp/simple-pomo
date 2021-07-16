@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Platform,
     TextInput,
+    Alert,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,7 +16,7 @@ import * as timerActions from "../../../../../shared/store/actions/timer";
 
 const TaskItem = (props) => {
     const [editing, setEditing] = useState(false);
-    const [formInput, setFormInput] = useState(null);
+    const [formInput, setFormInput] = useState(props.item.title);
     const isBreak = useSelector((state) => state.timer.isBreak);
     const taskList = useSelector((state) => state.tasks.tasks);
 
@@ -35,22 +36,33 @@ const TaskItem = (props) => {
         setEditing(() => true);
     };
     const submitButtonHandler = () => {
-        dispatch(taskActions.updateTask(props.item.id, formInput));
-        setFormInput(() => null);
-        setEditing(() => false);
+        if (formInput.trim().length === 0) {
+            Alert.alert("Error", "Please enter a name for this task.", [
+                { text: "Close" },
+            ]);
+        } else {
+            dispatch(taskActions.updateTask(props.item.id, formInput));
+            setFormInput(() => null);
+            setEditing(() => false);
+        }
     };
     const discardButtonHandler = () => {
         setFormInput(() => null);
         setEditing(() => false);
     };
     return (
-        <View>
+        <View style={styles.item}>
             {editing && (
                 <View style={styles.screen}>
                     <TextInput
                         placeholder={props.item.title}
                         onChangeText={(text) => setFormInput(text)}
                         value={formInput}
+                        style={{
+                            fontSize: 16,
+                            height: 16,
+                            marginTop: 6,
+                        }}
                     />
                     <View style={styles.controls}>
                         <TouchableOpacity
@@ -86,7 +98,7 @@ const TaskItem = (props) => {
             )}
             {!editing && (
                 <View style={styles.screen}>
-                    <Text>{props.item.title}</Text>
+                    <Text style={{ fontSize: 16 }}>{props.item.title}</Text>
                     <View style={styles.controls}>
                         <TouchableOpacity
                             onPress={editButtonHandler}
@@ -163,8 +175,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginVertical: 5,
-        // borderBottomColor: "gray",
-        // borderBottomWidth: 1,
     },
     controls: {
         flexDirection: "row",
@@ -172,9 +182,15 @@ const styles = StyleSheet.create({
     },
     controlElement: {
         paddingHorizontal: 5,
+        fontSize: 16,
     },
     deleteButton: {
         paddingLeft: 10,
+    },
+    item: {
+        borderBottomColor: "grey",
+        borderBottomWidth: 1,
+        marginBottom: 5,
     },
 });
 

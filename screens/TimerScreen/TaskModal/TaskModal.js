@@ -7,6 +7,8 @@ import {
     Platform,
     TextInput,
     Button,
+    Alert,
+    KeyboardAvoidingView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,13 +19,19 @@ import * as Colors from "../../../shared/constants/Colors";
 const TaskModal = (props) => {
     const isBreak = useSelector((state) => state.timer.isBreak);
     const dispatch = useDispatch();
-    const [formInput, setFormInput] = useState(null);
+    const [formInput, setFormInput] = useState("");
     const submitHandler = () => {
-        dispatch(taskActions.addTask(formInput));
-        setFormInput(() => null);
+        if (formInput.trim().length === 0) {
+            Alert.alert("Error", "Please enter a name for this task.", [
+                { text: "Close" },
+            ]);
+        } else {
+            dispatch(taskActions.addTask(formInput));
+            setFormInput(() => "");
+        }
     };
     return (
-        <View style={styles.modal}>
+        <KeyboardAvoidingView style={styles.modal}>
             <View style={styles.closeButton}>
                 <TouchableOpacity onPress={props.modalHandler}>
                     <Ionicons
@@ -57,7 +65,7 @@ const TaskModal = (props) => {
                     />
                 </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

@@ -2,6 +2,7 @@ export const APPLY_PREFERENCES = "APPLY_PREFERENCES";
 export const SET_HAS_LOADED = "SET_HAS_LOADED";
 export const SET_IS_LOADING = "SET_IS_LOADING";
 export const CLOUD_OPT_OUT = "CLOUD_OPT_OUT";
+export const CLOUD_OPT_IN = "CLOUD_OPT_IN";
 
 import * as db from "../../helpers/db";
 import { firebase } from "../../helpers/firebase";
@@ -86,6 +87,15 @@ export const cloudOptOut = () => {
         await db.updateOption("cloudStorage", 0);
         dispatch({
             type: CLOUD_OPT_OUT,
+        });
+    };
+};
+
+export const cloudOptIn = () => {
+    return async (dispatch) => {
+        await db.updateOption("cloudStorage", 1);
+        dispatch({
+            type: CLOUD_OPT_IN,
         });
     };
 };

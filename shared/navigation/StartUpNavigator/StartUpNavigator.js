@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { firebase } from "../../helpers/firebase";
 import { AppNavigator, AuthNavigator } from "../AppNavigator";
 import * as ColorsConstant from "../../constants/Colors";
@@ -10,6 +10,11 @@ import * as authActions from "../../store/actions/auth";
 import * as taskActions from "../../store/actions/tasks";
 
 import { useAuthState } from "react-firebase-hooks/auth";
+
+const appTheme = {
+    ...DefaultTheme,
+    colors: { ...DefaultTheme.colors, background: "white" },
+};
 
 const StartUpNavigator = (props) => {
     const prefs = useSelector((state) => state.preferences.options);
@@ -48,7 +53,7 @@ const StartUpNavigator = (props) => {
             <ActivityIndicator size="large" color={ColorsConstant.Notice} />
         </View>
     ) : (
-        <NavigationContainer>
+        <NavigationContainer theme={appTheme}>
             {useCloud && !user && <AuthNavigator />}
             {(!useCloud || user) && <AppNavigator />}
         </NavigationContainer>

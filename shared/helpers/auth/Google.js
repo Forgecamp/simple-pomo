@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { View, Button } from "react-native";
+import { View, Button, Image, TouchableOpacity } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
 import { firebase } from "../firebase";
 import ExpoConstants from "expo-constants";
+import GButton from "../../../assets/btn_google_signin.png";
 
 const GoogleButton = (props) => {
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest({
@@ -21,14 +22,16 @@ const GoogleButton = (props) => {
     }, [gResponse]);
 
     return (
-        <View>
-            <Button
-                title="Login with Google"
-                onPress={() => {
-                    gPromptAsync();
-                }}
+        <TouchableOpacity
+            onPress={() => {
+                gPromptAsync();
+            }}
+        >
+            <Image
+                source={GButton}
+                style={{ width: "100%", resizeMode: "contain" }}
             />
-        </View>
+        </TouchableOpacity>
     );
 };
 

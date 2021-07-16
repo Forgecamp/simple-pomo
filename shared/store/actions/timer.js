@@ -20,8 +20,8 @@ export const playPause = (endTime = null) => {
             }
             noteId = await Notifications.scheduleNotificationAsync({
                 content: {
-                    title: "Time's Up!",
-                    body: "Time's Up!",
+                    title: "Simple Pomo",
+                    body: "Timer finished!",
                 },
                 trigger: endTime,
             });

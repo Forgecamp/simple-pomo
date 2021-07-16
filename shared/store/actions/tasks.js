@@ -42,8 +42,7 @@ export const addTask = (title) => {
             const doc = await firestore.collection("users").doc(uid).get();
             const tasks = doc.data().tasks;
             const id = generateId(tasks);
-
-            await firestore
+            firestore
                 .collection("users")
                 .doc(uid)
                 .update({
