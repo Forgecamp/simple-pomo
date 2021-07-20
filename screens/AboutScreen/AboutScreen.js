@@ -20,7 +20,7 @@ import * as ColorsConstant from "../../shared/constants/Colors";
 
 const AboutScreen = () => {
     const handleRateApp = async () => {
-        // Opens a browser in-app to the appropriate mobile app store
+        // Opens a browser modal to the appropriate mobile app store
         const storeLink =
             Platform.OS === "ios"
                 ? "https://appstore.com/app/id/1575618998/"
@@ -29,6 +29,7 @@ const AboutScreen = () => {
     };
 
     const handleDonate = async () => {
+        // Opens a browser modal to Forgecamp's Ko-Fi page.
         await WebBrowser.openBrowserAsync("https://ko-fi.com/forgecamp");
     };
 
@@ -39,7 +40,7 @@ const AboutScreen = () => {
                     <View style={styles.headline}>
                         <Text style={styles.title}>Simple Pomo</Text>
                         <Text style={styles.subtitle}>
-                            by D. Williams; v0.0.1
+                            by D. Williams; v1.0.0
                         </Text>
                     </View>
                     <View style={styles.section}>
@@ -53,9 +54,9 @@ const AboutScreen = () => {
                 </View>
                 <View style={styles.buttons}>
                     <View style={styles.section}>
-                        {/* This is probably just going to be an OS-specific direct app store link */}
                         <View style={styles.buttonContainer}>
                             <View style={styles.customButtonContainer}>
+                                {/* App Review Link */}
                                 <TouchableOpacity
                                     onPress={handleRateApp}
                                     style={styles.customButton}
@@ -68,9 +69,9 @@ const AboutScreen = () => {
                         </View>
                     </View>
                     <View style={styles.section}>
-                        {/* A mailto to my Forgecamp Dev email */}
                         <View style={styles.buttonContainer}>
                             <View style={styles.customButtonContainer}>
+                                {/* Launches native mail app to send feedback */}
                                 <TouchableOpacity
                                     onPress={() => {
                                         Linking.openURL(
@@ -89,6 +90,7 @@ const AboutScreen = () => {
                     <View style={styles.section}>
                         <View style={styles.buttonContainer}>
                             <View style={styles.customButtonContainer}>
+                                {/* The Ko-Fi button */}
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={handleDonate}
