@@ -1,3 +1,4 @@
+// Core
 import React from "react";
 import {
     View,
@@ -5,59 +6,85 @@ import {
     TouchableOpacity,
     Text,
     Platform,
+    ScrollView,
 } from "react-native";
+import { useDispatch } from "react-redux";
+// Third Party
 import GoogleButton from "../../shared/helpers/auth/Google";
 import AppleButton from "../../shared/helpers/auth/Apple";
-import { useDispatch } from "react-redux";
+// Shared
 import * as authActions from "../../shared/store/actions/auth";
 import * as preferencesActions from "../../shared/store/actions/preferences";
+// Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
 
 const StartupScreen = () => {
     const dispatch = useDispatch();
+
+    // Dispatch third party credentials to authenticate users with Firebase
     const handleAuth = (credential) => {
         dispatch(authActions.authenticate(credential));
     };
 
+    // Allows user to proceed without login, using internal DB
+    const cloudOptOut = () => {
+        dispatch(preferencesActions.cloudOptOut());
+    };
+
     return (
-        <View style={styles.authScreen}>
-            <View style={styles.splash}>
-                <View style={styles.headline}>
-                    <Text style={styles.headlineText}>
-                        Thanks for using Simple Pomo!
-                    </Text>
+        <ScrollView
+            contentContainerStyle={{
+                height: "100%",
+                justifyContent: "space-between",
+            }}
+        >
+            <View style={styles.authScreen}>
+                <View style={styles.splash}>
+                    <View style={styles.headline}>
+                        <Text style={styles.headlineText}>
+                            Thanks for using Simple Pomo!
+                        </Text>
+                    </View>
+                    <View style={styles.subhead}>
+                        <Text style={styles.subheadText}>
+                            Simpe Pomo is a time management tool utilizing
+                            Francesco Cirillo's renowned Pomodoro Technique,
+                            which breaks tasks down into managable segments and
+                            encourages frequent, short breaks.
+                        </Text>
+                    </View>
+                    <View style={styles.subhead}>
+                        <Text style={styles.subheadText}>
+                            Please consider signing in securely for cloud
+                            storage of your tasks and options.
+                        </Text>
+                    </View>
                 </View>
-                <View style={styles.subhead}>
-                    <Text style={styles.subheadText}>
-                        Please consider signing in securely for cloud storage of
-                        your tasks and options.
-                    </Text>
-                </View>
-            </View>
-            <View>
-                <View style={styles.buttonContainer}>
-                    <AppleButton authHandler={handleAuth} />
-                </View>
-                <View style={styles.buttonContainer}>
-                    <GoogleButton authHandler={handleAuth} />
-                </View>
-                <View style={styles.buttonContainer}>
-                    <View style={styles.cloudOptOutContainer}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                dispatch(preferencesActions.cloudOptOut());
-                            }}
-                            style={styles.cloudOptOutButton}
-                        >
-                            <Text style={styles.cloudOptOutText}>
-                                Proceed Offline
-                            </Text>
-                        </TouchableOpacity>
+                <View style={styles.loginButtons}>
+                    {/* AppleButton has own logic to determine if it should be shown or not */}
+                    <View style={styles.buttonContainer}>
+                        <AppleButton authHandler={handleAuth} />
+                    </View>
+                    {/* GoogleButton is always shown */}
+                    <View style={styles.buttonContainer}>
+                        <GoogleButton authHandler={handleAuth} />
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <View style={styles.cloudOptOutContainer}>
+                            <TouchableOpacity
+                                onPress={cloudOptOut}
+                                style={styles.cloudOptOutButton}
+                            >
+                                <Text style={styles.cloudOptOutText}>
+                                    Proceed Offline
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -81,19 +108,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    input: {
-        borderColor: "black",
-        borderWidth: 1,
-        padding: 5,
-        width: 300,
-        marginBottom: 10,
-    },
     buttonContainer: {
         width: 300,
         margin: 5,
-    },
-    inputContainer: {
-        alignItems: "flex-start",
     },
     label: {
         paddingBottom: 3,
@@ -119,9 +136,10 @@ const styles = StyleSheet.create({
     },
     splash: {
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
         marginHorizontal: 30,
     },
+    loginButtons: {},
     headline: {
         marginBottom: 10,
     },
@@ -132,6 +150,9 @@ const styles = StyleSheet.create({
     subheadText: {
         fontSize: 16,
         textAlign: "justify",
+    },
+    subhead: {
+        paddingTop: 30,
     },
 });
 

@@ -1,4 +1,4 @@
-// Core/First Party
+// Core
 import React from "react";
 import {
     ScrollView,
@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
-// Third Party Packages
-// Additional Modules/Components
+// Third Party
+import kofiButton from "../../assets/kofi-stroke.png";
+// Shared
 import MenuButton from "../../shared/components/UI/MenuButton";
-import icon from "../../assets/kofi-stroke.png";
 // Constants
 import * as ColorsConstant from "../../shared/constants/Colors";
 
@@ -95,7 +95,10 @@ const AboutScreen = () => {
                                     style={styles.button}
                                     onPress={handleDonate}
                                 >
-                                    <Image style={styles.kofi} source={icon} />
+                                    <Image
+                                        style={styles.kofi}
+                                        source={kofiButton}
+                                    />
                                 </TouchableOpacity>
                             </View>
                         </View>
