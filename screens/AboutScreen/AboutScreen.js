@@ -104,6 +104,18 @@ const AboutScreen = () => {
                         </View>
                     </View>
                 </View>
+                <View style={styles.info}>
+                    <View style={styles.section}>
+                        <Text style={styles.disclaimer}>
+                            Simpe Pomo is not related to the Pomodoro
+                            Technique™/Pomodoro™’s trademark holder Cirillo
+                            Company. The Pomodoro Technique® and Pomodoro® are
+                            registered trademarks of Francesco Cirillo. All
+                            logos and marks contained herein are the property of
+                            their respective owners.
+                        </Text>
+                    </View>
+                </View>
             </View>
         </ScrollView>
     );
@@ -118,7 +130,7 @@ const styles = StyleSheet.create({
     },
     info: {
         width: "100%",
-        marginBottom: 60,
+        marginBottom: 30,
     },
     headline: {
         alignItems: "center",
@@ -141,6 +153,7 @@ const styles = StyleSheet.create({
     },
     buttons: {
         width: "100%",
+        marginBottom: 30,
     },
     header: {
         fontWeight: "bold",
@@ -151,6 +164,10 @@ const styles = StyleSheet.create({
     },
     subHeader: {
         fontSize: 16,
+        paddingLeft: 5,
+    },
+    disclaimer: {
+        fontSize: 14,
         paddingLeft: 5,
     },
     kofi: {
