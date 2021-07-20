@@ -20,15 +20,16 @@ import * as ColorsConstant from "../../shared/constants/Colors";
 
 const AboutScreen = () => {
     const handleRateApp = async () => {
+        // Opens a browser in-app to the appropriate mobile app store
         const storeLink =
             Platform.OS === "ios"
                 ? "https://appstore.com/app/id/1575618998/"
                 : "https://play.google.com/store/apps/details?id=com.forgecamp.simplepomo";
-        await WebBrowser.openAuthSessionAsync(storeLink);
+        await WebBrowser.openBrowserAsync(storeLink);
     };
 
     const handleDonate = async () => {
-        await WebBrowser.openAuthSessionAsync("https://ko-fi.com/forgecamp");
+        await WebBrowser.openBrowserAsync("https://ko-fi.com/forgecamp");
     };
 
     return (
