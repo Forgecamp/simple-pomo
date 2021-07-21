@@ -1,24 +1,14 @@
 // eslint-disable-next-line no-unused-vars
-// Core/First Party
+// Core
 import React, { useState, useEffect } from "react";
-import {
-    View,
-    StyleSheet,
-    ActivityIndicator,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-} from "react-native";
-import { useIsFocused } from "@react-navigation/core";
+import { View, StyleSheet, ActivityIndicator, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { firebase } from "../../shared/helpers/firebase";
-// Third Party Packages
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import OptionsPanel from "./OptionsPanel";
+// Shared
 import HeaderButton from "../../shared/components/UI/HeaderButton";
 import * as preferencesActions from "../../shared/store/actions/preferences";
-import OptionsPanel from "./OptionsPanel";
-// Additional Modules/Components
 // Constants
 import * as ColorConstants from "../../shared/constants/Colors";
 

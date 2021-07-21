@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+// Core
 import React from "react";
 import { useSelector } from "react-redux";
 import { View, StyleSheet, FlatList } from "react-native";
@@ -6,6 +7,7 @@ import NumericOption from "./NumericOption";
 import BinaryOption from "./BinaryOption";
 
 const OptionsPanel = (props) => {
+    // Mostly just a wrapper for the different types of options
     const options = useSelector((state) => state.preferences.options);
     const numericOptions = [
         options.defaultFocus,

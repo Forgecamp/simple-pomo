@@ -1,9 +1,13 @@
 /* eslint-disable react/prop-types */
+// Core
 import React, { useState } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+// Constants
 import * as ColorConstant from "../../../../shared/constants/Colors";
 
 const BinaryOption = (props) => {
+    // We're being literal with "binary option", using 1 for 'true' and 0 for 'false',
+    // to ensure the DB plays nice
     const [buttonState, setButtonState] = useState(props.item.value);
     const binaryChangeHandler = () => {
         props.setFormState((prev) => {
