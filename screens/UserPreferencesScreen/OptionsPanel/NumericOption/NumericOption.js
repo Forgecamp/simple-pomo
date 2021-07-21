@@ -1,11 +1,16 @@
 /* eslint-disable react/prop-types */
+// Core
 import React, { useState, useEffect } from "react";
 import { useIsFocused } from "@react-navigation/core";
 import { useSelector } from "react-redux";
 import { Text, View, TextInput, StyleSheet } from "react-native";
 
 const NumericInput = (props) => {
+    // You'll see things divided by 60 a lot
+    // Options are stored as seconds, but displayed as minutes
     const isFocused = useIsFocused();
+    // formInput is mainly used to ensure only useful values reach the formState
+    // while not unduly constraining user input
     const [formInput, setFormInput] = useState(
         (props.item.value / 60).toString()
     );
@@ -14,10 +19,12 @@ const NumericInput = (props) => {
     );
 
     useEffect(() => {
+        // If somebody navigates away from the screen without saving, go back to initial values
         textChangeHandler(initialValue);
     }, [isFocused]);
 
     const textChangeHandler = (text) => {
+        // We only want numbers, since these are all numeric options
         let validatedText = text.replace(/[^0-9]/g, "");
         setFormInput(validatedText);
         props.setFormState((prev) => {

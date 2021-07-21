@@ -42,7 +42,7 @@
 
 # About Screen
 
-    -This whole thing is basically one big placeholder; identify best practices and implement them
+    -(DONE) This whole thing is basically one big placeholder; identify best practices and implement them
 
 # Authentication Screen
 

@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
+// Core
 import * as SQLite from "expo-sqlite";
+// The initialization is long, for brevity it is in another file
 import * as transactions from "./transactions";
 
 const db = SQLite.openDatabase("simplepomo.db");

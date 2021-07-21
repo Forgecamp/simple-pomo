@@ -1,4 +1,4 @@
-// Core/First Party
+// Core
 import React from "react";
 import {
     ScrollView,
@@ -11,24 +11,26 @@ import {
 } from "react-native";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
-// Third Party Packages
-// Additional Modules/Components
+// Third Party
+import kofiButton from "../../assets/kofi-stroke.png";
+// Shared
 import MenuButton from "../../shared/components/UI/MenuButton";
-import icon from "../../assets/kofi-stroke.png";
 // Constants
 import * as ColorsConstant from "../../shared/constants/Colors";
 
 const AboutScreen = () => {
     const handleRateApp = async () => {
+        // Opens a browser modal to the appropriate mobile app store
         const storeLink =
             Platform.OS === "ios"
                 ? "https://appstore.com/app/id/1575618998/"
                 : "https://play.google.com/store/apps/details?id=com.forgecamp.simplepomo";
-        await WebBrowser.openAuthSessionAsync(storeLink);
+        await WebBrowser.openBrowserAsync(storeLink);
     };
 
     const handleDonate = async () => {
-        await WebBrowser.openAuthSessionAsync("https://ko-fi.com/forgecamp");
+        // Opens a browser modal to Forgecamp's Ko-Fi page.
+        await WebBrowser.openBrowserAsync("https://ko-fi.com/forgecamp");
     };
 
     return (
@@ -38,7 +40,7 @@ const AboutScreen = () => {
                     <View style={styles.headline}>
                         <Text style={styles.title}>Simple Pomo</Text>
                         <Text style={styles.subtitle}>
-                            by D. Williams; v0.0.1
+                            by D. Williams; v1.0.0
                         </Text>
                     </View>
                     <View style={styles.section}>
@@ -52,9 +54,9 @@ const AboutScreen = () => {
                 </View>
                 <View style={styles.buttons}>
                     <View style={styles.section}>
-                        {/* This is probably just going to be an OS-specific direct app store link */}
                         <View style={styles.buttonContainer}>
                             <View style={styles.customButtonContainer}>
+                                {/* App Review Link */}
                                 <TouchableOpacity
                                     onPress={handleRateApp}
                                     style={styles.customButton}
@@ -67,9 +69,9 @@ const AboutScreen = () => {
                         </View>
                     </View>
                     <View style={styles.section}>
-                        {/* A mailto to my Forgecamp Dev email */}
                         <View style={styles.buttonContainer}>
                             <View style={styles.customButtonContainer}>
+                                {/* Launches native mail app to send feedback */}
                                 <TouchableOpacity
                                     onPress={() => {
                                         Linking.openURL(
@@ -88,14 +90,30 @@ const AboutScreen = () => {
                     <View style={styles.section}>
                         <View style={styles.buttonContainer}>
                             <View style={styles.customButtonContainer}>
+                                {/* The Ko-Fi button */}
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={handleDonate}
                                 >
-                                    <Image style={styles.kofi} source={icon} />
+                                    <Image
+                                        style={styles.kofi}
+                                        source={kofiButton}
+                                    />
                                 </TouchableOpacity>
                             </View>
                         </View>
+                    </View>
+                </View>
+                <View style={styles.info}>
+                    <View style={styles.section}>
+                        <Text style={styles.disclaimer}>
+                            Simpe Pomo is not related to the Pomodoro
+                            Technique™/Pomodoro™’s trademark holder Cirillo
+                            Company. The Pomodoro Technique® and Pomodoro® are
+                            registered trademarks of Francesco Cirillo. All
+                            logos and marks contained herein are the property of
+                            their respective owners.
+                        </Text>
                     </View>
                 </View>
             </View>
@@ -112,7 +130,7 @@ const styles = StyleSheet.create({
     },
     info: {
         width: "100%",
-        marginBottom: 60,
+        marginBottom: 30,
     },
     headline: {
         alignItems: "center",
@@ -135,6 +153,7 @@ const styles = StyleSheet.create({
     },
     buttons: {
         width: "100%",
+        marginBottom: 30,
     },
     header: {
         fontWeight: "bold",
@@ -145,6 +164,10 @@ const styles = StyleSheet.create({
     },
     subHeader: {
         fontSize: 16,
+        paddingLeft: 5,
+    },
+    disclaimer: {
+        fontSize: 14,
         paddingLeft: 5,
     },
     kofi: {

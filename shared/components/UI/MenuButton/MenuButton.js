@@ -1,10 +1,13 @@
+// Core
 import React from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
-import * as ColorsConstants from "../../../constants/Colors";
-import HeaderButton from "../HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+// Shared
+import HeaderButton from "../HeaderButton";
+// Constants
+import * as ColorsConstants from "../../../constants/Colors";
 
 const MenuButton = (navData) => {
     const isBreak = useSelector((state) => state.timer.isBreak);

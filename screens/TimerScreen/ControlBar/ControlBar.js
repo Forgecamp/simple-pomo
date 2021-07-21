@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
-// Core/First Party
+// Core
 import React from "react";
 import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-// Third Party Packages
 
 const ControlBar = (props) => {
     return (
+        // Handles the Control Bar.
+        // Each button is hooked up to an appropriate action from the root module
         <View style={styles.controlBar}>
             <TouchableOpacity onPress={props.playPauseHandler}>
                 <Ionicons

@@ -1,3 +1,4 @@
+// Core
 import React, { useState } from "react";
 import {
     View,
@@ -13,20 +14,28 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import TaskList from "./TaskList";
+// Shared
 import * as taskActions from "../../../shared/store/actions/tasks";
 import * as Colors from "../../../shared/constants/Colors";
 
 const TaskModal = (props) => {
-    const isBreak = useSelector((state) => state.timer.isBreak);
+    // This component is largely concerned with the task submission form
+    // It also wraps the TaskList which handles displaying current tasks
+
     const dispatch = useDispatch();
+    const isBreak = useSelector((state) => state.timer.isBreak);
+    const tasks = useSelector((state) => state.tasks.tasks);
     const [formInput, setFormInput] = useState("");
+
     const submitHandler = () => {
+        // Check to ensure they're not submitting empty strings
         if (formInput.trim().length === 0) {
             Alert.alert("Error", "Please enter a name for this task.", [
                 { text: "Close" },
             ]);
         } else {
             dispatch(taskActions.addTask(formInput));
+            // Reset the input once it's submitted
             setFormInput(() => "");
         }
     };
@@ -47,8 +56,9 @@ const TaskModal = (props) => {
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Tasks</Text>
                 </View>
-                <TaskList tasks={props.tasks} />
+                <TaskList tasks={tasks} />
             </View>
+            {/* Where task entry occurs */}
             <View style={styles.taskForm}>
                 <TextInput
                     style={styles.taskInput}

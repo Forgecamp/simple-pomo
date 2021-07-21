@@ -1,3 +1,4 @@
+// Core
 import React, { useState } from "react";
 import {
     Text,
@@ -21,6 +22,8 @@ const TaskItem = (props) => {
     const taskList = useSelector((state) => state.tasks.tasks);
 
     const dispatch = useDispatch();
+
+    // A collection of methods that dispatches appropriate actions for the task controls to use
     const deleteButtonHandler = () => {
         dispatch(taskActions.removeTask(props.item.id));
         if (!isBreak && taskList[0].id === props.item.id)
@@ -35,6 +38,13 @@ const TaskItem = (props) => {
     const editButtonHandler = () => {
         setEditing(() => true);
     };
+    const discardButtonHandler = () => {
+        setFormInput(() => null);
+        setEditing(() => false);
+    };
+
+    // Handles submission of edited titles
+    // Includes much of the same logic as the initial task submission
     const submitButtonHandler = () => {
         if (formInput.trim().length === 0) {
             Alert.alert("Error", "Please enter a name for this task.", [
@@ -46,10 +56,7 @@ const TaskItem = (props) => {
             setEditing(() => false);
         }
     };
-    const discardButtonHandler = () => {
-        setFormInput(() => null);
-        setEditing(() => false);
-    };
+
     return (
         <View style={styles.item}>
             {editing && (
@@ -96,6 +103,7 @@ const TaskItem = (props) => {
                     </View>
                 </View>
             )}
+            {/* Regular task display begins here */}
             {!editing && (
                 <View style={styles.screen}>
                     <Text style={{ fontSize: 16 }}>{props.item.title}</Text>
@@ -114,6 +122,7 @@ const TaskItem = (props) => {
                                 color={"black"}
                             />
                         </TouchableOpacity>
+                        {/* Increment the number of times a task is repeated */}
                         <TouchableOpacity
                             onPress={plusButtonHandler}
                             style={styles.controlElement}
@@ -131,6 +140,7 @@ const TaskItem = (props) => {
                         <Text style={styles.controlElement}>
                             {props.item.count + 1}
                         </Text>
+                        {/* Decrement the number of times a task is repeated */}
                         <TouchableOpacity
                             onPress={minusButtonHandler}
                             style={styles.controlElement}

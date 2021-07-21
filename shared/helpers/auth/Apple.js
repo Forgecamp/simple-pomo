@@ -1,10 +1,13 @@
+// Core
 import React from "react";
 import { View, Platform } from "react-native";
 import * as Crypto from "expo-crypto";
+// Third Party
 import * as AppleAuthentication from "expo-apple-authentication";
 import { firebase } from "../firebase";
 
 const Apple = (props) => {
+    // Handles Apple login via a button component it returns
     const loginWithApple = async () => {
         const csrf = Math.random().toString(36).substring(2, 15);
         const nonce = Math.random().toString(36).substring(2, 10);

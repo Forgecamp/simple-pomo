@@ -1,15 +1,18 @@
+// Core
 import React, { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import { firebase } from "../../helpers/firebase";
 import { AppNavigator, AuthNavigator } from "../AppNavigator";
-import * as ColorsConstant from "../../constants/Colors";
+// Third Party
+import { firebase } from "../../helpers/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+// Shared
 import * as preferencesActions from "../../store/actions/preferences";
 import * as authActions from "../../store/actions/auth";
 import * as taskActions from "../../store/actions/tasks";
-
-import { useAuthState } from "react-firebase-hooks/auth";
+// Constants
+import * as ColorsConstant from "../../constants/Colors";
 
 const appTheme = {
     ...DefaultTheme,
@@ -17,6 +20,7 @@ const appTheme = {
 };
 
 const StartUpNavigator = (props) => {
+    // This navigator handles authentication flow
     const prefs = useSelector((state) => state.preferences.options);
     const useCloud = prefs.cloudStorage?.value === 1 ? true : false;
     const dispatch = useDispatch();
@@ -24,6 +28,7 @@ const StartUpNavigator = (props) => {
     const uid = useSelector((state) => state.auth.uid);
     const [user, loading, error] = useAuthState(firebase.auth());
 
+    // If Firebase logs someone in, let the app store know
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             dispatch(authActions.setUser(user));
