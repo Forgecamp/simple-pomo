@@ -10,7 +10,6 @@ import {
     SET_TASKS_LOADED,
 } from "../actions/tasks";
 import Task from "../../models/task";
-// import dummyData from "../../dummyData";
 const initialState = { tasks: [], loading: false };
 
 export default function (state = initialState, action) {

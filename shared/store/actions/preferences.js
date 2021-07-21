@@ -8,8 +8,10 @@ import * as db from "../../helpers/db";
 import { firebase } from "../../helpers/firebase";
 
 export const loadPreferences = () => {
+    // Grab the user's preferences from Firestore if logged in or internal DB if not
     return async (dispatch) => {
         try {
+            // Even if the user is logged in we may need the default options from the internal DB
             const uid = await firebase.auth().currentUser?.uid;
             const dbResult = await db.fetchOptions();
             const parsedResults = await dbResult.rows["_array"];
@@ -25,6 +27,7 @@ export const loadPreferences = () => {
                 };
             }
             if (uid !== undefined) {
+                // If there's a UID then they're logged in, so check Firestore
                 const firestore = firebase.firestore();
                 const record = await firestore
                     .collection("users")
@@ -32,11 +35,13 @@ export const loadPreferences = () => {
                     .get();
                 let cloudOptions = await record.data().options;
                 if (Object.keys(cloudOptions).length === 0) {
+                    // If the Firestore is empty, send up the default options
                     await firestore
                         .collection("users")
                         .doc(uid)
                         .update({ options: options });
                 } else {
+                    // If not, use the Firestore options
                     options = { ...cloudOptions };
                 }
             }
@@ -53,6 +58,7 @@ export const loadPreferences = () => {
 };
 
 export const savePreferences = (options) => {
+    // Save the current options to the internal DB or Firestore, as appropriate
     return async (dispatch) => {
         try {
             const uid = await firebase.auth().currentUser?.uid;

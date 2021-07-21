@@ -10,7 +10,10 @@ export const playPause = (endTime = null) => {
     return async (dispatch) => {
         let noteId = null;
         if (endTime) {
+            // If an endTime is passed then we're starting the timer
+            // Schedule a notification to go off at the prescribed time
             if (Platform.OS === "ios") {
+                // We need to ensure we have sufficient permissions on IOS
                 let permission = await Notifications.getPermissionsAsync();
                 if (permission.status === "undetermined") {
                     permission = await Notifications.requestPermissionsAsync({
@@ -26,6 +29,8 @@ export const playPause = (endTime = null) => {
                 trigger: endTime,
             });
         } else {
+            // If there is no endTime specified then somebody hit pause
+            // Cancel notifications so the user doesn't receive a notice for a paused timer
             await Notifications.cancelAllScheduledNotificationsAsync();
         }
         dispatch({
@@ -38,15 +43,19 @@ export const playPause = (endTime = null) => {
 
 export const stop = (taskId, isBreak, currentCount) => {
     return async (dispatch) => {
+        // When the user hits stop we stop all notifications
         await Notifications.cancelAllScheduledNotificationsAsync();
         dispatch({
             type: STOP,
         });
+        // Send a completeTask dispatch with the information we have
+        // Whether or not to complete a task is decided by the completeTask action
         dispatch(taskActions.completeTask(taskId, isBreak, currentCount));
     };
 };
 export const reset = () => {
     return async (dispatch) => {
+        // Resets the current timer back to start, which will also pause it
         await Notifications.cancelAllScheduledNotificationsAsync();
         dispatch({
             type: RESET,
