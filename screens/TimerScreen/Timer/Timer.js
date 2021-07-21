@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-// Core/First Party
+// Core
 import React from "react";
 import {
     View,
@@ -10,14 +10,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-// Third Party Packages
+// Third Party
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-// Additional Modules/Components
-// Constants
-
-import { LogBox } from "react-native";
 
 const Timer = (props) => {
+    // Most of this is just setting up the CountdownCircleTimer
     const timerState = useSelector((state) => state.timer);
     return (
         <View style={styles.timerFace}>
@@ -33,6 +30,7 @@ const Timer = (props) => {
                 size={250}
                 onComplete={props.onComplete}
             >
+                {/* Handles the inside of the timer */}
                 {({ remainingTime, animatedColor }) => {
                     let minutes = Math.floor(remainingTime / 60)
                         .toString()
@@ -50,6 +48,7 @@ const Timer = (props) => {
                             >
                                 {props.title}
                             </Animated.Text>
+                            {/* Clicking the remaining time should also pause/play */}
                             <TouchableOpacity onPress={props.playPauseHandler}>
                                 <Animated.Text
                                     style={{

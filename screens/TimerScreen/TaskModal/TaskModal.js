@@ -24,6 +24,7 @@ const TaskModal = (props) => {
 
     const dispatch = useDispatch();
     const isBreak = useSelector((state) => state.timer.isBreak);
+    const tasks = useSelector((state) => state.tasks.tasks);
     const [formInput, setFormInput] = useState("");
 
     const submitHandler = () => {
@@ -55,7 +56,7 @@ const TaskModal = (props) => {
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Tasks</Text>
                 </View>
-                <TaskList tasks={props.tasks} />
+                <TaskList tasks={tasks} />
             </View>
             {/* Where task entry occurs */}
             <View style={styles.taskForm}>

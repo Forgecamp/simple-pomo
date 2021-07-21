@@ -1,4 +1,4 @@
-// Core/First Party
+// Core
 import React, { useState, useEffect } from "react";
 import {
     View,
@@ -11,30 +11,28 @@ import {
 } from "react-native";
 import * as Notifications from "expo-notifications";
 import { Ionicons } from "@expo/vector-icons";
-// Third Party Packages
 import { useDispatch, useSelector } from "react-redux";
-// Additional Modules/Components
 import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
+// Shared
 import * as timerActions from "../../shared/store/actions/timer";
-import * as taskActions from "../../shared/store/actions/tasks";
-import * as preferencesActions from "../../shared/store/actions/preferences";
-
 // Constants
 import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
 
 const TimerScreen = (props) => {
-    const [modalVisible, setModalVisible] = useState(false);
     const dispatch = useDispatch();
+    const [modalVisible, setModalVisible] = useState(false);
     const timerState = useSelector((state) => state.timer);
     const taskList = useSelector((state) => state.tasks.tasks);
     const loading = useSelector((state) => state.tasks.loading);
+    const prefState = useSelector((state) => state.preferences);
+
     const currentTask = taskList.length > 0 ? taskList[0].title : "Focus";
     const currentTaskId = taskList.length > 0 ? taskList[0].id : "null";
     const currentTaskCount = taskList.length > 0 ? taskList[0].count : 0;
-    const prefState = useSelector((state) => state.preferences);
+
     const autoContinue = prefState.options.autoContinue
         ? prefState.options.autoContinue.value
         : 0;
@@ -44,6 +42,7 @@ const TimerScreen = (props) => {
     const isBreak = timerState.isBreak;
 
     useEffect(() => {
+        // These options concern how notifications are handled while app is active
         Notifications.setNotificationHandler({
             handleNotification: async () => ({
                 shouldShowAlert: false,
@@ -52,6 +51,7 @@ const TimerScreen = (props) => {
         });
     }, [useSound]);
 
+    // Handlers for controlling the timer, to be passed to assorted components as needed
     const resetTimerHandler = async () => {
         dispatch(timerActions.reset());
     };
@@ -110,21 +110,19 @@ const TimerScreen = (props) => {
         setModalVisible((prev) => !prev);
     };
 
+    // Ensure we don't show a busted app while things are loading async
     return loading ? (
         <View style={styles.loadingScreen}>
             <ActivityIndicator size="large" color={ColorsConstant.Notice} />
         </View>
     ) : (
         <View style={styles.main}>
+            {/* The main event, with control handlers passed down where appropriate */}
             <Timer
                 resetTimerHandler={resetTimerHandler}
                 playPauseHandler={playPauseHandler}
-                color={
-                    timerState.isBreak
-                        ? ColorsConstant.Success
-                        : ColorsConstant.Notice
-                }
-                title={timerState.isBreak ? "Break" : currentTask}
+                color={isBreak ? ColorsConstant.Success : ColorsConstant.Notice}
+                title={isBreak ? "Break" : currentTask}
                 onComplete={() => {
                     stopHandler(true);
                     if (autoContinue && !isBreak) {
@@ -136,12 +134,9 @@ const TimerScreen = (props) => {
                 playPauseHandler={playPauseHandler}
                 stopHandler={() => stopHandler()}
                 isRunning={timerState.isRunning}
-                color={
-                    timerState.isBreak
-                        ? ColorsConstant.Success
-                        : ColorsConstant.Notice
-                }
+                color={isBreak ? ColorsConstant.Success : ColorsConstant.Notice}
             />
+            {/* Modal Button */}
             <View style={styles.modalOpener}>
                 <TouchableOpacity onPress={toggleModalHandler}>
                     <Ionicons
@@ -152,7 +147,7 @@ const TimerScreen = (props) => {
                         }
                         size={35}
                         color={
-                            timerState.isBreak
+                            isBreak
                                 ? ColorsConstant.Success
                                 : ColorsConstant.Notice
                         }
@@ -164,13 +159,13 @@ const TimerScreen = (props) => {
                 transparent={false}
                 visible={modalVisible}
             >
-                <TaskModal tasks={taskList} modalHandler={toggleModalHandler} />
+                <TaskModal modalHandler={toggleModalHandler} />
             </Modal>
         </View>
     );
 };
 
-export const ScreenOptions = (navData) => {
+export const ScreenOptions = () => {
     return {
         headerTitle: "Simple Pomo",
     };
