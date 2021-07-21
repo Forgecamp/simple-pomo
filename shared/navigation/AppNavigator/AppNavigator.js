@@ -1,3 +1,4 @@
+// Core
 import React from "react";
 import { Platform, View, SafeAreaView, Button, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +9,8 @@ import {
     DrawerItem,
     DrawerContentScrollView,
 } from "@react-navigation/drawer";
+import { Ionicons } from "@expo/vector-icons";
+// Screens
 import TimerScreen, { TimerScreenOptions } from "../../../screens/TimerScreen";
 import AboutScreen, {
     ScreenOptions as AboutScreenOptions,
@@ -16,19 +19,22 @@ import UserPreferencesScreen, {
     ScreenOptions as PrefsScreenOptions,
 } from "../../../screens/UserPreferencesScreen";
 import AuthScreen from "../../../screens/AuthScreen";
-import * as ColorsConstants from "../../constants/Colors";
-import MenuButton from "../../components/UI/MenuButton";
+// Third Party
 import { firebase } from "../../helpers/firebase";
+// Shared
+import MenuButton from "../../components/UI/MenuButton";
 import * as prefsActions from "../../store/actions/preferences";
-import { Ionicons } from "@expo/vector-icons";
+// Constants
+import * as ColorsConstants from "../../constants/Colors";
 
-const TimerStackNavigator = createStackNavigator();
-const AboutStackNavigator = createStackNavigator();
-const UserPrefsStackNavigator = createStackNavigator();
 const AppDrawerNavigator = createDrawerNavigator();
 const AuthStackNavigator = createStackNavigator();
+const AboutStackNavigator = createStackNavigator();
+const TimerStackNavigator = createStackNavigator();
+const UserPrefsStackNavigator = createStackNavigator();
 
 const defaultScreenOptions = (navData) => {
+    // Handles basic stuff like swapping colors based on timer state and IOS-vs-Android themeing
     const isBreak = useSelector((state) => state.timer.isBreak);
     const color = isBreak ? ColorsConstants.Success : ColorsConstants.Notice;
     return {
@@ -91,6 +97,7 @@ export const AuthNavigator = () => {
 };
 
 const CustomDrawerContent = (props) => {
+    // Our assorted screens, plus a log in/out button
     const auth = firebase.auth();
     const dispatch = useDispatch();
     return (
@@ -115,6 +122,7 @@ const CustomDrawerContent = (props) => {
 };
 
 export const AppNavigator = () => {
+    // Main app navigator
     const isBreak = useSelector((state) => state.timer.isBreak);
     const color = isBreak ? ColorsConstants.Success : ColorsConstants.Notice;
     return (
