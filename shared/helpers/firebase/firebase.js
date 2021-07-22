@@ -1,4 +1,5 @@
 import * as firebase from "firebase";
+import "expo-firestore-offline-persistence";
 import "@firebase/auth";
 import "@firebase/firestore";
 
@@ -15,5 +16,11 @@ const firebaseConfig = {
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
+firebase
+    .firestore()
+    .enablePersistence()
+    .catch((err) => {
+        console.log(err);
+    });
 
 export { firebase };

@@ -36,7 +36,7 @@ export const loadPreferences = () => {
                 let cloudOptions = await record.data().options;
                 if (Object.keys(cloudOptions).length === 0) {
                     // If the Firestore is empty, send up the default options
-                    await firestore
+                    firestore
                         .collection("users")
                         .doc(uid)
                         .update({ options: options });
@@ -61,6 +61,10 @@ export const savePreferences = (options) => {
     // Save the current options to the internal DB or Firestore, as appropriate
     return async (dispatch) => {
         try {
+            dispatch({
+                type: APPLY_PREFERENCES,
+                options: options,
+            });
             const uid = await firebase.auth().currentUser?.uid;
             const firestore = firebase.firestore();
 
@@ -72,16 +76,11 @@ export const savePreferences = (options) => {
                     );
                 }
             } else {
-                await firestore
+                firestore
                     .collection("users")
                     .doc(uid)
                     .update({ options: options });
             }
-
-            dispatch({
-                type: APPLY_PREFERENCES,
-                options: options,
-            });
         } catch (error) {
             console.log(error);
         }
