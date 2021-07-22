@@ -9,21 +9,9 @@ export const SET_TASKS = "SET_TASKS";
 export const SET_TASKS_LOADING = "SET_TASKS_LOADING";
 export const SET_TASKS_LOADED = "SET_TASKS_LOADED";
 
-import Chance from "chance";
+import { v4 as uuidv4 } from "uuid";
 import * as db from "../../helpers/db";
 import { firebase } from "../../helpers/firebase";
-
-const chance = new Chance();
-
-const generateId = (tasks) => {
-    // Generates a random ID that isn't in use on Firestore
-    const guid = chance.guid();
-    if (tasks.some((ele) => ele.id === guid)) {
-        generateId();
-    } else {
-        return guid;
-    }
-};
 
 export const addTask = (title) => {
     return async (dispatch) => {
@@ -42,21 +30,8 @@ export const addTask = (title) => {
                 });
             } else {
                 // If we have a UID we're logged in; send it to Firestore
-                // The structure of our Firestore precludes an auto-generated ID, so we make our own
                 const firestore = firebase.firestore();
-                const doc = await firestore.collection("users").doc(uid).get();
-                const tasks = doc.data().tasks;
-                const id = generateId(tasks);
-                firestore
-                    .collection("users")
-                    .doc(uid)
-                    .update({
-                        tasks: firebase.firestore.FieldValue.arrayUnion({
-                            id: id,
-                            title: title,
-                            count: 0,
-                        }),
-                    });
+                const id = uuidv4();
                 dispatch({
                     type: ADD_TASK,
                     taskData: {
@@ -64,6 +39,17 @@ export const addTask = (title) => {
                         title: title,
                     },
                 });
+                firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({
+                        lastUpdated: Date.now(),
+                        tasks: firebase.firestore.FieldValue.arrayUnion({
+                            id: id,
+                            title: title,
+                            count: 0,
+                        }),
+                    });
             }
         } catch (err) {
             console.log(err);
@@ -74,6 +60,10 @@ export const addTask = (title) => {
 export const removeTask = (taskId) => {
     return async (dispatch) => {
         try {
+            dispatch({
+                type: REMOVE_TASK,
+                taskId: taskId,
+            });
             const uid = await firebase.auth().currentUser?.uid;
             if (uid === undefined) {
                 // Removing a task if we're not logged in is straightforward
@@ -87,19 +77,16 @@ export const removeTask = (taskId) => {
                     (task) => task.id === taskId
                 );
 
-                await firestore
+                firestore
                     .collection("users")
                     .doc(uid)
                     .update({
+                        lastUpdated: Date.now(),
                         tasks: firebase.firestore.FieldValue.arrayRemove(
                             tasks[relevantIndex]
                         ),
                     });
             }
-            dispatch({
-                type: REMOVE_TASK,
-                taskId: taskId,
-            });
         } catch (err) {
             console.log(err);
         }
@@ -109,6 +96,11 @@ export const removeTask = (taskId) => {
 export const completeTask = (isBreak, taskId, currentCount) => {
     return async (dispatch) => {
         try {
+            dispatch({
+                type: COMPLETE_TASK,
+                isBreak: isBreak,
+                currentCount: currentCount,
+            });
             // We need to make sure we're not trying to complete a non-existant task
             // I.E. a break, or if someone is using it with the default 'Focus' task
             if (!isBreak && taskId.length) {
@@ -134,14 +126,16 @@ export const completeTask = (isBreak, taskId, currentCount) => {
                     // Decrement or remove the task, based on the count
                     if (currentCount > 0) {
                         tasks[relevantIndex].count--;
-                        await firestore.collection("users").doc(uid).update({
+                        firestore.collection("users").doc(uid).update({
+                            lastUpdated: Date.now(),
                             tasks: tasks,
                         });
                     } else {
-                        await firestore
+                        firestore
                             .collection("users")
                             .doc(uid)
                             .update({
+                                lastUpdated: Date.now(),
                                 tasks: firebase.firestore.FieldValue.arrayRemove(
                                     tasks[relevantIndex]
                                 ),
@@ -149,11 +143,6 @@ export const completeTask = (isBreak, taskId, currentCount) => {
                     }
                 }
             }
-            dispatch({
-                type: COMPLETE_TASK,
-                isBreak: isBreak,
-                currentCount: currentCount,
-            });
         } catch (err) {
             console.log(err);
         }
@@ -163,6 +152,13 @@ export const completeTask = (isBreak, taskId, currentCount) => {
 export const updateTask = (taskId, newTitle) => {
     return async (dispatch) => {
         try {
+            dispatch({
+                type: EDIT_TASK,
+                taskData: {
+                    taskId: taskId,
+                    newTitle: newTitle,
+                },
+            });
             // Updating the title is always pretty straightforward
             const uid = await firebase.auth().currentUser?.uid;
             if (uid === undefined) {
@@ -177,17 +173,11 @@ export const updateTask = (taskId, newTitle) => {
                 );
 
                 tasks[relevantIndex].title = newTitle;
-                await firestore.collection("users").doc(uid).update({
+                firestore.collection("users").doc(uid).update({
+                    lastUpdated: Date.now(),
                     tasks: tasks,
                 });
             }
-            dispatch({
-                type: EDIT_TASK,
-                taskData: {
-                    taskId: taskId,
-                    newTitle: newTitle,
-                },
-            });
         } catch (err) {
             console.log(err);
         }
@@ -197,6 +187,10 @@ export const updateTask = (taskId, newTitle) => {
 export const incrementTask = (taskId, currentCount) => {
     return async (dispatch) => {
         try {
+            dispatch({
+                type: INCREMENT_TASK,
+                taskId: taskId,
+            });
             const uid = await firebase.auth().currentUser?.uid;
             if (uid === undefined) {
                 db.incrementTask(taskId, currentCount);
@@ -209,14 +203,11 @@ export const incrementTask = (taskId, currentCount) => {
                 );
 
                 tasks[relevantIndex].count++;
-                await firestore.collection("users").doc(uid).update({
+                firestore.collection("users").doc(uid).update({
+                    lastUpdated: Date.now(),
                     tasks: tasks,
                 });
             }
-            dispatch({
-                type: INCREMENT_TASK,
-                taskId: taskId,
-            });
         } catch (err) {
             console.log(err);
         }
@@ -226,6 +217,10 @@ export const incrementTask = (taskId, currentCount) => {
 export const decrementTask = (taskId, currentCount) => {
     return async (dispatch) => {
         try {
+            dispatch({
+                type: DECREMENT_TASK,
+                taskId: taskId,
+            });
             const uid = await firebase.auth().currentUser?.uid;
             if (uid === undefined) {
                 db.decrementTask(taskId, currentCount);
@@ -238,14 +233,11 @@ export const decrementTask = (taskId, currentCount) => {
                 );
 
                 tasks[relevantIndex].count--;
-                await firestore.collection("users").doc(uid).update({
+                firestore.collection("users").doc(uid).update({
+                    lastUpdated: Date.now(),
                     tasks: tasks,
                 });
             }
-            dispatch({
-                type: DECREMENT_TASK,
-                taskId: taskId,
-            });
         } catch (err) {
             console.log(err);
         }

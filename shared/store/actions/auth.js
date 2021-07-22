@@ -26,6 +26,7 @@ export const authenticate = (credential) => {
                     id: user.uid,
                     tasks: [],
                     options: {},
+                    lastUpdated: Date.now(),
                 });
             }
         } catch (error) {
