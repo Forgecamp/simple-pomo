@@ -1,7 +1,7 @@
 {
     "expo": {
-        "name": "simple-pomo",
-        "slug": "simple-pomo",
+        "name": "Simple Pomo",
+        "slug": "simplepomo",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
@@ -10,16 +10,30 @@
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
+        "scheme": "simplepomo",
         "updates": {
             "fallbackToCacheTimeout": 0
         },
         "assetBundlePatterns": ["**/*"],
         "ios": {
             "bundleIdentifier": "forgecamp.net.simplepomo",
+            "googleServicesFile": "./GoogleService-info.plist",
             "supportsTablet": true,
-            "usesAppleSignIn": true
+            "usesAppleSignIn": true,
+            "config": {
+                "googleSignIn": {
+                    "reservedClientId": "com.googleusercontent.apps.596936347484-5ad0aqaupt695u7r03du1900djj85unr"
+                }
+            }
         },
         "android": {
+            "googleServicesFile": "./google-services.json",
+            "config": {
+                "googleSignIn": {
+                    "apiKey": "AIzaSyBa7yjsOo6vWzJRE-eNhXHnrOw3ovN4aXg",
+                    "certificateHash": "39C75DFFE647CFC8A74EF5B4801127EE7D5FE98C"
+                }
+            },
             "package": "com.forgecamp.simplepomo",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
@@ -30,8 +44,10 @@
             "favicon": "./assets/favicon.png"
         },
         "extra": {
-            "ANDROID_KEY": "435636724308-dfikr32hbhg75kguu4sm4jeq82ose89m.apps.googleusercontent.com",
-            "EXPO_CLIENT": "435636724308-87pbk73f9v2f1aonejqddm858al3lafj.apps.googleusercontent.com"
+            "EXPO_IOS_CLIENT_ID": "596936347484-ehc5n9kabtn8trb82te1o1v007poarub.apps.googleusercontent.com",
+            "EXPO_ANDROID_CLIENT_ID": "596936347484-uf3kfkgoahcccconhe5ridfnip0nka31.apps.googleusercontent.com",
+            "ANDROID_CLIENT_ID": "596936347484-q01oqm1ts126bpibf0esgoss751kuhce.apps.googleusercontent.com",
+            "EXPO_CLIENT": "596936347484-hqejiu2lupig9pvphl69o9ku7a7jc6al.apps.googleusercontent.com"
         }
     }
 }

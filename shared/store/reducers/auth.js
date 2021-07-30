@@ -8,6 +8,7 @@ const initialState = {
     uid: undefined,
     loading: false,
     attemptedLogin: false,
+    res: "n/a",
 };
 
 export default function (state = initialState, action) {
@@ -28,6 +29,12 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 loading: false,
+            };
+        }
+        case "STORE_RES": {
+            return {
+                ...state,
+                res: action.res,
             };
         }
         default: {

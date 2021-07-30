@@ -50,3 +50,7 @@ export const setUserLoading = () => {
 export const setUserLoaded = () => {
     return { type: SET_USER_LOADED };
 };
+
+export const storeRes = (res) => {
+    return { type: "STORE_RES", res: res };
+};
