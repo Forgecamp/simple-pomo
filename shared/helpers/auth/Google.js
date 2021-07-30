@@ -32,6 +32,7 @@ const GoogleButton = (props) => {
     const signInWithGoogle = async () => {
         try {
             await Google.askForPlayServicesAsync();
+            await Google.signOutAsync();
             const { type, user } = await Google.signInAsync();
             if (type === "success") {
                 setIdToken(() => user.auth.idToken);

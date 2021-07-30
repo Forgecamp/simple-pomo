@@ -1,7 +1,6 @@
 // Core
 import React, { useEffect } from "react";
-import { Text, Image, TouchableOpacity } from "react-native";
-import * as AuthSession from "expo-auth-session";
+import { Image, TouchableOpacity } from "react-native";
 // Third Party
 import { firebase } from "../firebase";
 import GButton from "../../../assets/btn_google_signin.png";
@@ -15,8 +14,7 @@ const GoogleButton = (props) => {
     const dispatch = useDispatch();
     // Handles login via Google, triggered by the button this component returns
     const [gRequest, gResponse, gPromptAsync] = Google.useIdTokenAuthRequest({
-        expoClientId:
-            "596936347484-cm6krl4h3kicsuh9ndoenta752g6odln.apps.googleusercontent.com",
+        expoClientId: ExpoConstants.manifest.extra.EXPO_CLIENT,
     });
 
     useEffect(() => {

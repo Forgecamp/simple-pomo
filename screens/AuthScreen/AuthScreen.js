@@ -67,12 +67,13 @@ const StartupScreen = () => {
                     <View style={styles.buttonContainer}>
                         <AppleButton authHandler={handleAuth} />
                     </View>
-                    {/* GoogleButton is only shown on standalone, otherwise it's the Expo-specific one */}
+                    {/* ExpoGoogleButton is basically only for the simulator */}
                     {ExpoConstants.appOwnership === "expo" && (
                         <View style={styles.buttonContainer}>
                             <ExpoGoogleButton authHandler={handleAuth} />
                         </View>
                     )}
+                    {/* GoogleButton is always shown on standalone */}
                     {ExpoConstants.appOwnership === "standalone" && (
                         <View style={styles.buttonContainer}>
                             <GoogleButton authHandler={handleAuth} />
