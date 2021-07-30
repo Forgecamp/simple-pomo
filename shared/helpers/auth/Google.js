@@ -1,6 +1,6 @@
 // Core
 import React, { useEffect, useState } from "react";
-import { Alert, Image, TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 // Third Party
 import { firebase } from "../firebase";
 import * as Google from "expo-google-sign-in";

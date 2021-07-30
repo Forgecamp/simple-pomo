@@ -28,12 +28,6 @@
         },
         "android": {
             "googleServicesFile": "./google-services.json",
-            "config": {
-                "googleSignIn": {
-                    "apiKey": "AIzaSyBa7yjsOo6vWzJRE-eNhXHnrOw3ovN4aXg",
-                    "certificateHash": "39C75DFFE647CFC8A74EF5B4801127EE7D5FE98C"
-                }
-            },
             "package": "com.forgecamp.simplepomo",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
