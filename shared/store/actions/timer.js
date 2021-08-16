@@ -25,7 +25,7 @@ export const playPause = (endTime = null) => {
                 content: {
                     title: "Simple Pomo",
                     body: "Timer finished!",
-                    ios: { sound: true },
+                    sound: true,
                 },
                 trigger: endTime,
             });
