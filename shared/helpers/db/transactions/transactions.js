@@ -50,7 +50,7 @@ export const init = [
             "autoContinue",
             0,
             "Begin Breaks Automatically",
-            "Breaks begin immediately after focus periods, without user input."
+            "Breaks begin immediately after focus periods while Simple Pomo is in the foreground."
         );
     `,
     `
@@ -59,7 +59,7 @@ export const init = [
             "useSound",
             1,
             "Sound",
-            "Enable sound while Simple Pomo is active in the foreground."
+            "Enable audio prompts for finished periods while Simple Pomo is in the foreground."
         );
     `,
     `

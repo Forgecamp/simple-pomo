@@ -52,6 +52,11 @@ const NumericInput = (props) => {
                                 textChangeHandler(initialValue);
                             }
                         }}
+                        onEndEditing={() => {
+                            if (!formInput || formInput < 1) {
+                                textChangeHandler(initialValue);
+                            }
+                        }}
                     />
                 </View>
             </View>

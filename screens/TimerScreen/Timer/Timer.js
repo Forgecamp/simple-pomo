@@ -49,7 +49,9 @@ const Timer = (props) => {
                                 {props.title}
                             </Animated.Text>
                             {/* Clicking the remaining time should also pause/play */}
-                            <TouchableOpacity onPress={props.playPauseHandler}>
+                            <TouchableOpacity
+                                onPress={() => props.playPauseHandler(false)}
+                            >
                                 <Animated.Text
                                     style={{
                                         color: animatedColor,
