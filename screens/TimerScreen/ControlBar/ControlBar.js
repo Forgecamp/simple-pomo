@@ -9,7 +9,7 @@ const ControlBar = (props) => {
         // Handles the Control Bar.
         // Each button is hooked up to an appropriate action from the root module
         <View style={styles.controlBar}>
-            <TouchableOpacity onPress={props.playPauseHandler}>
+            <TouchableOpacity onPress={() => props.playPauseHandler(false)}>
                 <Ionicons
                     name={
                         Platform.OS === "android"

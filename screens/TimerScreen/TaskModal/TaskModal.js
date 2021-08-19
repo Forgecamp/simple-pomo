@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
     View,
     StyleSheet,
-    Text,
     TouchableOpacity,
     Platform,
     TextInput,
@@ -40,7 +39,11 @@ const TaskModal = (props) => {
         }
     };
     return (
-        <KeyboardAvoidingView style={styles.modal}>
+        <KeyboardAvoidingView
+            style={styles.modal}
+            behavior={Platform.OS === "ios" ? "padding" : null}
+            keyboardVerticalOffset={0}
+        >
             <View style={styles.closeButton}>
                 <TouchableOpacity onPress={props.modalHandler}>
                     <Ionicons
@@ -53,9 +56,6 @@ const TaskModal = (props) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.taskView}>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Tasks</Text>
-                </View>
                 <TaskList tasks={tasks} />
             </View>
             {/* Where task entry occurs */}
@@ -87,22 +87,23 @@ const styles = StyleSheet.create({
     },
     modal: {
         height: "100%",
-        paddingVertical: Platform.OS === "android" ? 10 : 40,
         paddingHorizontal: 25,
         justifyContent: "space-between",
         flex: 1,
     },
-    header: {
-        alignItems: "center",
+    taskView: {
+        maxHeight: "80%",
     },
-    headerText: {
-        fontWeight: "bold",
-        fontSize: 22,
+    taskForm: {
+        justifyContent: "flex-end",
+        maxHeight: "20%",
+        paddingVertical: 10,
     },
     taskInput: {
         borderBottomColor: "gray",
         borderBottomWidth: 1,
-        marginVertical: 10,
+        marginBottom: 10,
+        paddingTop: 20,
         padding: 5,
     },
 });

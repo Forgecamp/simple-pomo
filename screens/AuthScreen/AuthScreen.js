@@ -8,8 +8,9 @@ import {
     Platform,
     ScrollView,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // Third Party
+import ExpoGoogleButton from "../../shared/helpers/auth/expo-Google";
 import GoogleButton from "../../shared/helpers/auth/Google";
 import AppleButton from "../../shared/helpers/auth/Apple";
 // Shared
@@ -66,10 +67,19 @@ const StartupScreen = () => {
                     <View style={styles.buttonContainer}>
                         <AppleButton authHandler={handleAuth} />
                     </View>
-                    {/* GoogleButton is always shown */}
-                    <View style={styles.buttonContainer}>
-                        <GoogleButton authHandler={handleAuth} />
-                    </View>
+                    {/* ExpoGoogleButton is basically only for the simulator */}
+                    {ExpoConstants.appOwnership === "expo" && (
+                        <View style={styles.buttonContainer}>
+                            <ExpoGoogleButton authHandler={handleAuth} />
+                        </View>
+                    )}
+                    {/* GoogleButton is always shown on standalone */}
+                    {ExpoConstants.appOwnership === "standalone" && (
+                        <View style={styles.buttonContainer}>
+                            <GoogleButton authHandler={handleAuth} />
+                        </View>
+                    )}
+
                     <View style={styles.buttonContainer}>
                         <View style={styles.cloudOptOutContainer}>
                             <TouchableOpacity
