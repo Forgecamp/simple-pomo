@@ -41,7 +41,7 @@ const TaskModal = (props) => {
     return (
         <KeyboardAvoidingView
             style={styles.modal}
-            behavior={"padding"}
+            behavior={Platform.OS === "ios" ? "padding" : null}
             keyboardVerticalOffset={0}
         >
             <View style={styles.closeButton}>
@@ -97,11 +97,13 @@ const styles = StyleSheet.create({
     taskForm: {
         justifyContent: "flex-end",
         maxHeight: "20%",
+        paddingVertical: 10,
     },
     taskInput: {
         borderBottomColor: "gray",
         borderBottomWidth: 1,
-        marginVertical: 10,
+        marginBottom: 10,
+        paddingTop: 20,
         padding: 5,
     },
 });
