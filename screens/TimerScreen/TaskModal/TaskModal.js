@@ -8,7 +8,7 @@ import {
     TextInput,
     Button,
     Alert,
-    KeyboardAvoidingView,2
+    KeyboardAvoidingView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
