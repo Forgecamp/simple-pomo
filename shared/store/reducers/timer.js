@@ -77,6 +77,7 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 key: state.key + 1,
+                isRunning: false,
                 focusLength: action.options.defaultFocus.value,
                 shortBreakLength: action.options.defaultShortBreak.value,
                 longBreakLength: action.options.defaultLongBreak.value,
