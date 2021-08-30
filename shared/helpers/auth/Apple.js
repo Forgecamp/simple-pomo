@@ -16,14 +16,11 @@ const Apple = (props) => {
             nonce
         );
         const appleCredential = await AppleAuthentication.signInAsync({
-            requestedScopes: [
-                AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                AppleAuthentication.AppleAuthenticationScope.EMAIL,
-            ],
+            requestedScopes: [],
             state: csrf,
             nonce: hashedNonce,
         });
-        const { identityToken, email, state } = appleCredential;
+        const { identityToken } = appleCredential;
 
         const provider = new firebase.auth.OAuthProvider("apple.com");
         const authCredential = provider.credential({

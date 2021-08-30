@@ -33,7 +33,7 @@ export const loadPreferences = () => {
                     .collection("users")
                     .doc(uid)
                     .get();
-                let cloudOptions = await record.data().options;
+                let cloudOptions = await record.data()?.options;
                 if (Object.keys(cloudOptions).length === 0) {
                     // If the Firestore is empty, send up the default options
                     firestore

@@ -22,7 +22,6 @@ export const authenticate = (credential) => {
                 .get();
             if (!record.exists) {
                 firestore.collection("users").doc(user.uid).set({
-                    email: user.email,
                     id: user.uid,
                     tasks: [],
                     options: {},
