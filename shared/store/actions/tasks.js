@@ -72,7 +72,7 @@ export const removeTask = (taskId) => {
                 // .. removing a task from Firestore a bit less so, since we need the index
                 const firestore = firebase.firestore();
                 const doc = await firestore.collection("users").doc(uid).get();
-                const tasks = doc.data().tasks;
+                const tasks = doc.data()?.tasks;
                 const relevantIndex = tasks.findIndex(
                     (task) => task.id === taskId
                 );
@@ -119,7 +119,7 @@ export const completeTask = (isBreak, taskId, currentCount) => {
                         .collection("users")
                         .doc(uid)
                         .get();
-                    const tasks = doc.data().tasks;
+                    const tasks = doc.data()?.tasks;
                     const relevantIndex = tasks.findIndex(
                         (task) => task.id === taskId
                     );
@@ -167,7 +167,7 @@ export const updateTask = (taskId, newTitle) => {
                 // Editing the title of the task and replacing the old task list with the new:
                 const firestore = firebase.firestore();
                 const doc = await firestore.collection("users").doc(uid).get();
-                const tasks = doc.data().tasks;
+                const tasks = doc.data()?.tasks;
                 const relevantIndex = tasks.findIndex(
                     (task) => task.id === taskId
                 );
@@ -197,7 +197,7 @@ export const incrementTask = (taskId, currentCount) => {
             } else {
                 const firestore = firebase.firestore();
                 const doc = await firestore.collection("users").doc(uid).get();
-                const tasks = doc.data().tasks;
+                const tasks = doc.data()?.tasks;
                 const relevantIndex = tasks.findIndex(
                     (task) => task.id === taskId
                 );
@@ -227,7 +227,7 @@ export const decrementTask = (taskId, currentCount) => {
             } else {
                 const firestore = firebase.firestore();
                 const doc = await firestore.collection("users").doc(uid).get();
-                const tasks = doc.data().tasks;
+                const tasks = doc.data()?.tasks;
                 const relevantIndex = tasks.findIndex(
                     (task) => task.id === taskId
                 );
@@ -265,7 +265,7 @@ export const loadTasks = () => {
             } else {
                 const firestore = firebase.firestore();
                 const doc = await firestore.collection("users").doc(uid).get();
-                const tasks = doc.data().tasks;
+                const tasks = doc.data()?.tasks;
                 dispatch({ type: SET_TASKS, tasks: tasks });
                 dispatch(setTasksLoaded());
             }
