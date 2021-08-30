@@ -33,6 +33,13 @@ const AboutScreen = () => {
         await WebBrowser.openBrowserAsync("https://ko-fi.com/forgecamp");
     };
 
+    const handlePrivacy = async () => {
+        // Opens the privacy policy.
+        await WebBrowser.openBrowserAsync(
+            "https://forgecamp.github.io/simplepomoprivacy.html"
+        );
+    };
+
     return (
         <ScrollView>
             <View style={styles.screen}>
@@ -46,9 +53,10 @@ const AboutScreen = () => {
                     <View style={styles.section}>
                         <Text style={styles.header}>Privacy Policy: </Text>
                         <Text style={styles.subHeader}>
-                            We will never sell or distribute your email address,
-                            or any other information acquired from or related to
-                            the use of this program, for any reason.
+                            We will never sell your personal information, or
+                            distribute it for any purposes other than to
+                            facilitate general operation of this software. For
+                            more information, see our full privacy policy.
                         </Text>
                     </View>
                 </View>
@@ -63,6 +71,21 @@ const AboutScreen = () => {
                                 >
                                     <Text style={styles.customButtonText}>
                                         Rate & Review Simple Pomo
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.section}>
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.customButtonContainer}>
+                                {/* Opens the privacy policy */}
+                                <TouchableOpacity
+                                    onPress={handlePrivacy}
+                                    style={styles.customButton}
+                                >
+                                    <Text style={styles.customButtonText}>
+                                        View Privacy Policy
                                     </Text>
                                 </TouchableOpacity>
                             </View>
