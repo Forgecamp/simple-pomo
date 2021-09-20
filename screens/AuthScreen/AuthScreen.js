@@ -8,7 +8,7 @@ import {
     Platform,
     ScrollView,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 // Third Party
 import ExpoGoogleButton from "../../shared/helpers/auth/expo-Google";
 import GoogleButton from "../../shared/helpers/auth/Google";
