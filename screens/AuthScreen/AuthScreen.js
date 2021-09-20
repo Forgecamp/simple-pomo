@@ -49,7 +49,7 @@ const StartupScreen = () => {
                     </View>
                     <View style={styles.subhead}>
                         <Text style={styles.subheadText}>
-                            Simpe Pomo is a time management tool utilizing
+                            Simple Pomo is a time management tool utilizing
                             Francesco Cirillo&apos;s renowned Pomodoro
                             Technique, which breaks tasks down into managable
                             segments and encourages frequent, short breaks.
