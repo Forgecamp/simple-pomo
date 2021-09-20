@@ -8,7 +8,7 @@ import {
     Platform,
     ScrollView,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 // Third Party
 import ExpoGoogleButton from "../../shared/helpers/auth/expo-Google";
 import GoogleButton from "../../shared/helpers/auth/Google";
@@ -49,7 +49,7 @@ const StartupScreen = () => {
                     </View>
                     <View style={styles.subhead}>
                         <Text style={styles.subheadText}>
-                            Simpe Pomo is a time management tool utilizing
+                            Simple Pomo is a time management tool utilizing
                             Francesco Cirillo&apos;s renowned Pomodoro
                             Technique, which breaks tasks down into managable
                             segments and encourages frequent, short breaks.
