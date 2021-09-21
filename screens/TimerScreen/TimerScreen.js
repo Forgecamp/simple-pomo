@@ -12,6 +12,7 @@ import {
 import * as Notifications from "expo-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/core";
 import Timer from "./Timer";
 import TaskModal from "./TaskModal";
 import ControlBar from "./ControlBar";
@@ -22,6 +23,7 @@ import ExpoConstants from "expo-constants";
 import * as ColorsConstant from "../../shared/constants/Colors";
 
 const TimerScreen = (props) => {
+    const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const [modalVisible, setModalVisible] = useState(false);
     const timerState = useSelector((state) => state.timer);
@@ -125,7 +127,7 @@ const TimerScreen = (props) => {
                 title={isBreak ? "Break" : currentTask}
                 onComplete={() => {
                     stopHandler(true);
-                    if (autoContinue && !isBreak) {
+                    if (isFocused && autoContinue && !isBreak) {
                         playPauseHandler(true);
                     }
                 }}
