@@ -16,7 +16,7 @@
         },
         "assetBundlePatterns": ["**/*"],
         "ios": {
-            "buildNumber": "10",
+            "buildNumber": "11",
             "bundleIdentifier": "forgecamp.net.simplepomo",
             "googleServicesFile": "./GoogleService-info.plist",
             "supportsTablet": true,
