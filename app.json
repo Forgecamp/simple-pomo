@@ -10,13 +10,16 @@
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
+        "notification": {
+            "icon": "./assets//notification-icon-android.png"
+        },
         "scheme": "simplepomo",
         "updates": {
             "fallbackToCacheTimeout": 0
         },
         "assetBundlePatterns": ["**/*"],
         "ios": {
-            "buildNumber": "11",
+            "buildNumber": "14",
             "bundleIdentifier": "forgecamp.net.simplepomo",
             "googleServicesFile": "./GoogleService-info.plist",
             "supportsTablet": true,
@@ -30,13 +33,14 @@
         "android": {
             "googleServicesFile": "./google-services.json",
             "package": "com.forgecamp.simplepomo",
+            "icon": "./assets/icon.png",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#FFFFFF"
             }
         },
         "web": {
-            "favicon": "./assets/favicon.png"
+            "favicon": "./assets/adaptive-icon.png"
         },
         "extra": {
             "EXPO_IOS_CLIENT_ID": "596936347484-ehc5n9kabtn8trb82te1o1v007poarub.apps.googleusercontent.com",
