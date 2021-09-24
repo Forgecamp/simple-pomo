@@ -34,6 +34,7 @@
             "googleServicesFile": "./google-services.json",
             "package": "com.forgecamp.simplepomo",
             "icon": "./assets/icon.png",
+            "versionCode": 2,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#FFFFFF"
