@@ -19,10 +19,10 @@
         },
         "assetBundlePatterns": ["**/*"],
         "ios": {
-            "buildNumber": "15",
+            "buildNumber": "16",
             "bundleIdentifier": "forgecamp.net.simplepomo",
             "googleServicesFile": "./GoogleService-info.plist",
-            "supportsTablet": true,
+            "supportsTablet": false,
             "usesAppleSignIn": true,
             "config": {
                 "googleSignIn": {
